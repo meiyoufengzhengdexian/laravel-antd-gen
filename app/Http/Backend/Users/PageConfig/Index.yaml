@@ -1,0 +1,10 @@
+---
+# 列表页
+orderBy: "created_at|id,desc"
+pageSize: 20
+list:
+  - id
+  - name
+  - phone
+  - age
+  - schoole

@@ -1,0 +1,24 @@
+# 权限声明
+# permission:
+#  - name: # 权限名称
+#    desc: # 中文描述
+#    as:   # 绑定路由别名
+---
+permission:
+  - name: backend.cate.all
+    desc: 所有权限
+
+  - name: backend.cate.index #查看列表权限
+    desc: cate.authority.index
+
+  - name: backend.menu.cate.index
+    desc: cate.authority.index #查看列表按钮是否显示
+
+  - name: backend.cate.create #创建分类
+    desc: cate.authority.create
+
+  - name: backend.cate.store #创建分类
+    desc: cate.authority.store
+
+  - name: backend.menu.cate.create #创建分类按钮
+    desc: cate.authority.create

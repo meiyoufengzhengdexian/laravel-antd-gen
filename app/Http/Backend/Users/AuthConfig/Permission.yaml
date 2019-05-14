@@ -1,0 +1,10 @@
+---
+permission:
+  - name: users.create
+    desc: users.authority.create
+
+  - name: users.menu
+    desc: users.authority.menu
+
+  - name: users.menu.index
+    desc: users.authority.index

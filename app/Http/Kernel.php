@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\BackendCheckScopes;
+use App\Http\Middleware\BackendMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -59,6 +61,9 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'backend'=>BackendMiddleware::class,
+        'scopes' => BackendCheckScopes::class,
+        'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 

@@ -1,0 +1,87 @@
+# 数据库字段
+---
+column:
+  - name: id
+    type: int
+
+  - name: name
+    type: text
+    rules:
+      - message: 名称不能为空
+        rule: required
+      - message: 名称最大长度为255个字符
+        rule: max:255
+
+  - name: as
+    type: text
+    rules:
+      - message: 别名不能为空
+        rule: required
+      - message: 别名最大长度为255个字符
+        rule: max:255
+
+  - name: city
+    type: ref
+    refType: belongsTo
+    model: \App\Http\Backend\City\CityModel::class
+    foreignKey: city
+    refKey: id
+    rules:
+      - message: 城市不能为空
+        rule: required
+      - message: 该城市不存在
+        rule: exists:city,id
+
+  - name: pid
+    type: ref
+    refType: belongsTo
+    model: \App\Http\Backend\Cate\CateModel::class
+    foreignKey: pid
+    refKey: id
+    rules:
+      - message: 上级分类必须存在
+        rule: required
+      - message: 该分类不存在
+        rule: exists:cate,id
+
+  - name: status
+    type: enum
+    options:
+      - content: 启用
+        value: 1
+        default: 1
+      - content: 禁用
+        value: 0
+    rules:
+      - message: 状态不能为空
+        rule: required
+      - message: 状态必须为 0 或者 1
+        rule: in:1,0
+
+#  - name: tag
+#    type: enums
+#    options:
+#      - content: 国内
+#        value: 0
+#      - content: 国际
+#        value: 1
+#      - content: 军事
+#        value: 2
+#      - content: 娱乐
+#        value: 3
+  - name: tag
+    type: select
+    refType: belongsToMany
+    model: App\Http\Backend\Tag\TagModel
+    table: cate_tag
+    foreignPivotKey: cate_id
+    relatedPivotKey: tag_id
+
+  - name: created_at
+    type: datetime
+
+  - name: updated_at
+    type: datetime
+
+  - name: deleted_at
+    type: datetime
