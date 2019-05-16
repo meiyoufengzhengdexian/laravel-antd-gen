@@ -26,7 +26,6 @@ use App\Http\Backend\Tag\TagModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Spyc;
 
@@ -52,6 +51,54 @@ trait CateCurd
                 config('backend.defaultPerPage', 20)));
 
         $query = CateModel::query();
+
+        $admin = Tool::getNowAdmin();
+        if (!$admin->can('backend.cate.all')) {
+            //获取资源控制范围
+            $resourcePermissionConfig = $this->getConfig('Cate.AuthConfig.ResourcePermission');
+            $rps = Arr::get($resourcePermissionConfig, 'resourcePermission');
+            $resourceName = array_column($rps, 'resource');
+
+            //读取数据库中对应的资源权限
+            $abilitiesResources = AbilitiesResource::query()
+                ->whereIn('resource', $resourceName)
+                ->get();
+
+            $abilitiesResourcesIds = $abilitiesResources->pluck('id');
+
+            //读取所有权限规则
+            $abilities = Abilities::query()->where('entity_type', 'App\Http\AbilitiesResource')
+                ->whereIn('entity_id', $abilitiesResourcesIds)
+                ->get();
+
+            foreach ($abilities as $ability) {
+                if (!$admin->can($ability->name, $abilitiesResources->where('name', $ability->name)->first())) {
+                    continue;
+                }
+
+                //用户有此权限, 对query进行限定
+                $rules = AbilitiesResourceRule::query()->where('resource_id', $ability->entity_id)->get();
+                foreach ($rules as $rule) {
+                    $rule->condition_param = json_decode($rule->condition_param, true);
+
+                    if ($rule->ref && $rule->ref_type) {
+                        switch ($rule->ref_type) {
+                            case "belongsTo":
+                                $modelClass = $rule->model;
+                                $refQuery = $modelClass::query();
+                                $this->makeQuery($rule, $refQuery);
+                                $ids = $refQuery->pluck($rule->foreign_key);
+                                $rule->condition_type = "in";
+                                $rule->condition_param = $ids;
+                                break;
+                        }
+                    }
+
+                    $this->makeQuery($rule, $query, 'or');
+
+                }
+            }
+        }
 
         $this->search($query, $request, $indexConfig);
         $this->order($query, $request, $indexConfig);

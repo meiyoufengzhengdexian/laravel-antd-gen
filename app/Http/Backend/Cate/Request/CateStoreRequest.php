@@ -9,7 +9,6 @@
 namespace App\Http\Backend\Cate\Request;
 
 
-use App\AbilitiesResourceRule;
 use App\Http\Abilities;
 use App\Http\AbilitiesResource;
 use App\Http\Backend\BackendException;

@@ -6,7 +6,7 @@
  * Time: 上午12:44
  */
 
-namespace App;
+namespace App\Http;
 
 
 use Illuminate\Database\Eloquent\Model;
