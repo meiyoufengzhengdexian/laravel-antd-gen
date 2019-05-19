@@ -25,5 +25,4 @@ class SuccessResource extends BasicResource
             ]
         ];
     }
-
 }

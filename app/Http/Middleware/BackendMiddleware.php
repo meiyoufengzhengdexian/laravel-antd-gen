@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Backend\BackendPermissionException;
-use App\Http\Backend\BackendRequestAuthException;
+use App\Http\Controllers\Backend\BackendPermissionException;
+use App\Http\Controllers\Backend\BackendRequestAuthException;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use League\OAuth2\Server\ResourceServer;

@@ -1,0 +1,22 @@
+# 编辑表单页面
+
+---
+layout: center
+fields:
+  - name: name
+    type: text
+
+  - name: as
+    type: text
+
+  - name: pid
+    type: select
+
+  - name: city
+    type: select
+
+  - name: tag
+    type: checkbox
+
+  - name: status
+    type: radio

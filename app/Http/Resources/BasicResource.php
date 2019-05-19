@@ -17,7 +17,7 @@ class BasicResource extends JsonResource
     public function withResponse($request, $response)
     {
         $data = $response->getData();
-        if(isset($data->data) && is_array($data->data) && empty($data->data)){
+        if(isset($data->data) && is_array($data->data) && empty($data->data)) {
             $data->data = new \stdClass();
             $response->setData($data);
         }
