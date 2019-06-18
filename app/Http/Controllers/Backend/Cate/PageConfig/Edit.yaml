@@ -17,6 +17,7 @@ fields:
 
   - name: tag
     type: checkbox
+    method: CateModel@formatTags
 
   - name: status
     type: radio

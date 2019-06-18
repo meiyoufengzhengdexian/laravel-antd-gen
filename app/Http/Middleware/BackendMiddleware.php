@@ -64,7 +64,8 @@ class BackendMiddleware
 
         $this->validateScopes($psr, $scopes);
 
-        return $next($request);
+        $response = $next($request);
+        return $response;
     }
 
     /**

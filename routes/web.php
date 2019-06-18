@@ -15,3 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+function test (){
+    return [1, 2];
+}
+
+Route::get('woqu', function(){
+    [$a, $b] = test();
+    dd($a, $b);
+});

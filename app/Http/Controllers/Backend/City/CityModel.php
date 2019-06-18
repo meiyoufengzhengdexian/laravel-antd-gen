@@ -9,9 +9,13 @@
 namespace App\Http\Controllers\Backend\City;
 
 
-use App\Http\Backend\BackendModel;
+
+use App\Http\Controllers\Backend\BackendModel;
 
 class CityModel extends BackendModel
 {
     protected $table = 'city';
+
+
+
 }

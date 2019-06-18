@@ -1,10 +1,12 @@
 # 数据库字段
 ---
-column:
+fields:
   - name: id
+    as: id
     type: int
 
   - name: name
+    as: 名称
     type: text
     rules:
       - message: 名称不能为空
@@ -13,6 +15,7 @@ column:
         rule: max:255
 
   - name: as
+    as: 别名
     type: text
     rules:
       - message: 别名不能为空
@@ -21,21 +24,21 @@ column:
         rule: max:255
       - message: 名称不能重复
         rule: unique:cate,as
-
   - name: city
+    as: 城市
     type: ref
     refType: belongsTo
-    model: \App\Http\Backend\City\CityModel::class
-    foreignKey: city
-    refKey: id
+    refMethod: getCity
+    refField: name
     rules:
       - message: 城市不能为空
         rule: required
       - message: 该城市不存在
         rule: exists:city,id
-
   - name: pid
+    as: 上级分类
     type: ref
+    refMethod: getParent
     refType: belongsTo
     model: \App\Http\Backend\Cate\CateModel::class
     foreignKey: pid
@@ -47,6 +50,7 @@ column:
         rule: exists:cate,id
 
   - name: status
+    as: 状态
     type: enum
     options:
       - content: 启用
@@ -60,30 +64,24 @@ column:
       - message: 状态必须为 0 或者 1
         rule: in:1,0
 
-#  - name: tag
-#    type: enums
-#    options:
-#      - content: 国内
-#        value: 0
-#      - content: 国际
-#        value: 1
-#      - content: 军事
-#        value: 2
-#      - content: 娱乐
-#        value: 3
   - name: tag
-    type: select
+    as: 标签
+    type: ref
     refType: belongsToMany
+    refMethod: tags
     model: App\Http\Backend\Tag\TagModel
     table: cate_tag
     foreignPivotKey: cate_id
     relatedPivotKey: tag_id
 
   - name: created_at
+    as: 创建时间
     type: datetime
 
   - name: updated_at
+    as: 创建时间
     type: datetime
 
   - name: deleted_at
+    as: 删除时间
     type: datetime

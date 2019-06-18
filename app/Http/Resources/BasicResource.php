@@ -9,17 +9,13 @@
 namespace App\Http\Resources;
 
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use JsonSerializable;
 
 class BasicResource extends JsonResource
 {
-    public function withResponse($request, $response)
-    {
-        $data = $response->getData();
-        if(isset($data->data) && is_array($data->data) && empty($data->data)) {
-            $data->data = new \stdClass();
-            $response->setData($data);
-        }
-    }
+
 }

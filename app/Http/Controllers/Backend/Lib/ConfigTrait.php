@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Backend\Lib;
 
 
+use Illuminate\Support\Arr;
 use Spyc;
 
 trait ConfigTrait
@@ -42,8 +43,8 @@ trait ConfigTrait
         //获取数据类型
         foreach ($list as $key => $item) {
             $filter = array_filter($columns, function ($column) use ($item) {
-                return array_get($column, 'name', '##collumn_name')
-                    == array_get($item, 'name', "##index_name");
+                return Arr::get($column, 'name', '##collumn_name')
+                    == Arr::get($item, 'name', "##index_name");
             });
 
             if ($filter) {
@@ -56,6 +57,7 @@ trait ConfigTrait
                 $list[$key] = array_merge($item, $filter[0]);
             }
         }
+
 
         return $list;
 

@@ -9,9 +9,10 @@
 namespace App\Http\Controllers\Backend\Tag;
 
 
-use App\Http\Backend\BackendModel;
+
+use App\Http\Controllers\Backend\BackendModel;
 
 class TagModel extends BackendModel
 {
-
+    protected $table = 'tag';
 }

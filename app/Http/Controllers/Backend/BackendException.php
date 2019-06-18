@@ -23,8 +23,10 @@ class BackendException extends \Exception implements Responsable
     public function toResponse($request)
     {
         return new JsonResponse([
-            'code' => $this->getCode(),
-            'message' => $this->getMessage(),
+            'result'=>[
+                'code' => $this->getCode(),
+                'message' => $this->getMessage(),
+            ],
             'data' => $this->data
         ], 200, [], 256);
     }

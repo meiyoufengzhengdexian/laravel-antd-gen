@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Backend\BackendController;
 use App\Http\Requests\BackendLoginRequest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;

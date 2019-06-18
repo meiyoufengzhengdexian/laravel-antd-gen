@@ -18,8 +18,10 @@ class BackendRequestAuthException extends BackendException
     public function toResponse($request)
     {
         return new JsonResponse([
-            'code' => $this->getCode(),
-            'message' => $this->getMessage(),
+            'result' => [
+                'code'=>$this->getCode(),
+                'message'=> $this->getMessage(),
+            ],
             'data' => []
         ], 401, [], 256);
     }

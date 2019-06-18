@@ -66,15 +66,75 @@ trait CateCurd
                 config('backend.defaultPerPage', 20)));
 
         $query = CateModel::query();
+
+        $this->withRefData($query, $request, $indexConfig);
         $this->authRange($this->getNowAdmin(), $query);
 
         $this->search($query, $request, $indexConfig);
         $this->order($query, $request, $indexConfig);
 
-        $field = array_column(Arr::get($indexConfig, 'list'), 'name');
+        $columnConfig = $this->getConfig('Cate.Column');
+
+        $config = self::mergerConfig($columnConfig, $indexConfig);
+
+        $tableColumns = array_filter($config['fields'], function($item){
+            return !isset($item['refMethod']);
+        });
+
+        $field = array_column($tableColumns, 'name');
         $list = $query->select($field)->paginate($prePage);
+
+        foreach($list as $item){
+            foreach($config['fields'] as $field){
+                if(!isset($field['method'])){
+                    continue;
+                }
+                if(!strpos($field['method'], '@')){
+                    continue;
+                }
+
+                $method = explode('@', $field['method']);
+                $object = app(__NAMESPACE__.'\\'.$method[0]);
+                if($field['refMethod']){
+                    $formatValue = $object->{$method[1]}($item->{$field['refMethod']}, $item, $field);
+                }else{
+                    $formatValue = $object->{$method[1]}($item->{$field['name']}, $item, $field);
+                }
+                unset($item->{$field['name']});
+                $item->{$field['name']} = $formatValue;
+
+            }
+        }
+
         return $this->success($list);
 
+    }
+
+    /**
+     * @param $query
+     * @param Request $request
+     * @param $indexConfig
+     * @throws BackendException
+     */
+    public function withRefData(Builder $query, Request $request, $indexConfig)
+    {
+        $fields = Arr::get($indexConfig, 'fields', []);
+
+        if (!is_array($fields)) {
+            throw new BackendException('list.yaml 中fields， 必须为数组格式');
+        }
+
+        $columnsConfig = $this->getConfig('Cate.Column');
+        $columns = Arr::get($columnsConfig, 'fields');
+
+        $indexList = $this->withColumnData($fields, $columns);
+
+        foreach ($indexList as $column) {
+            if (Arr::get($column, 'type') != 'ref') {
+                continue;
+            }
+            $query->with(Arr::get($column, 'refMethod') . ":" . Arr::get($column, 'refField', '*'));
+        }
     }
 
     /**
@@ -85,16 +145,16 @@ trait CateCurd
      */
     public function search(Builder $query, Request $request, $indexConfig)
     {
-        $list = Arr::get($indexConfig, 'list', []);
+        $fields = Arr::get($indexConfig, 'fields', []);
 
-        if (!is_array($list)) {
-            throw new BackendException('list.yaml 中list， 必须为数组格式');
+        if (!is_array($fields)) {
+            throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
         $columnsConfig = $this->getConfig('Cate.Column');
-        $columns = Arr::get($columnsConfig, 'column');
+        $columns = Arr::get($columnsConfig, 'fields');
 
-        $searchList = array_filter($list, function ($item) {
+        $searchList = array_filter($fields, function ($item) {
             return Arr::get($item, 'search', false);
         });
 
@@ -103,7 +163,7 @@ trait CateCurd
         foreach ($searchList as $column) {
 
             $searchKey = $this->getInput($request, $column['name']);
-            if ($searchKey === false) {
+            if ($searchKey === false || is_null($searchKey)) {
                 continue;
             }
 
@@ -208,7 +268,7 @@ trait CateCurd
         $createConfig = $this->getConfig('Cate.PageConfig.Create');
         $columnConfig = $this->getConfig("Cate.Column");
         $fields = Arr::get($createConfig, 'fields');
-        $columns = Arr::get($columnConfig, 'column');
+        $columns = Arr::get($columnConfig, 'fields');
 
         $fieldsWithColumns = $this->withColumnData($fields, $columns);
         $newModel = new CateModel();
@@ -224,6 +284,21 @@ trait CateCurd
         }
     }
 
+    public static function mergerConfig($columnConfig, $config)
+    {
+
+        foreach ($config['fields'] as $key => $field) {
+            $data = array_filter($columnConfig['fields'], function ($item) use ($field) {
+                return Arr::get($item, 'name') == Arr::get($field, 'name');
+            });
+            if ($data) {
+                $data = array_values($data);
+                $config['fields'][$key] = array_merge($data[0], $field);
+            }
+        }
+        return $config;
+    }
+
     /**
      * 显示页面
      * @param CateShowRequest $request
@@ -234,17 +309,42 @@ trait CateCurd
      */
     public function show(CateShowrequest $request, $id)
     {
-        $model = CateModel::find($id);
+        $query = CateModel::query();
+        $editConfig = $this->getConfig('Cate.PageConfig.Edit');
+        $columnConfig = $this->getConfig('Cate.Column');
+        $config = self::mergerConfig($columnConfig, $editConfig);
 
-        if (!$model) {
+        $this->withRefData($query, $request, $config);
+        $data = $query->where('id', $id)->first();
+
+        foreach ($config['fields'] as $item) {
+            if (!isset($item['method'])) {
+                continue;
+            }
+            if (strpos($item['method'], '@') === false) {
+                continue;
+            }
+
+            $method = explode('@', $item['method']);
+            $object = app(__NAMESPACE__ . '\\' . $method[0]);
+            if ($item['refMethod']) {
+                $formatValue = $object->{$method[1]}($data->{$item['refMethod']}, $data, $item);
+                unset($data->{$item['name']});
+                $data->{$item['name']} = $formatValue;
+            } else {
+                $object->{$method[1]}($data->item['name'], $data, $item);
+            }
+        }
+
+        if (!$data) {
             return $this->failed("未找到分类id：" . $id);
         }
 
-        if (!$this->checkResourcePermission($this->getNowAdmin(), $model)) {
+        if (!$this->checkResourcePermission($this->getNowAdmin(), $data)) {
             throw new BackendPermissionException("抱歉您没有权限");
         }
 
-        return $this->success($model);
+        return $this->success($data);
     }
 
     /**
@@ -267,15 +367,12 @@ trait CateCurd
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
-        if (!$this->checkResourcePermission($this->getNowAdmin(), $model)) {
-            return $this->failed("您没有权限");
-        }
 
         $editConfig = $this->getConfig("Cate.PageConfig.Edit");
         $columnConfig = $this->getConfig('Cate.Column');
 
         $fields = Arr::get($editConfig, 'fields');
-        $columns = Arr::get($columnConfig, 'column');
+        $columns = Arr::get($columnConfig, 'fields');
 
         $columnEditConfig = $this->withColumnData($fields, $columns);
 
@@ -347,7 +444,7 @@ trait CateCurd
                 continue;
             }
 
-            if (!Arr::get($field, 'refType')) {
+            if (Arr::get($field, 'type') != 'ref') {
                 //不是关联数据
                 $model->$name = $request->input($name);
             } else {
@@ -357,20 +454,11 @@ trait CateCurd
                         $model->$name = $request->input($name);
                         break;
                     case "belongsToMany": //多对多
-                        $refModel = Arr::get($field, 'model');
-                        if (!$refModel) throw new BackendException('未找到关联模型：　' . json_encode($field, 256));
-
-                        $table = Arr::get($field, 'table');
-                        if (!$table) throw new BackendException('未找到belongsToMany表配置：　' . json_encode($field, 256));
-
-                        $foreignPivotKey = Arr::get($field, 'foreignPivotKey');
-                        if (!$foreignPivotKey) throw new BackendException('未找到foreignPivotKey的配置：　' . json_encode($field, 256));
-
-                        $relatedPivotKey = Arr::get($field, 'relatedPivotKey');
-                        if (!$relatedPivotKey) throw new BackendException('未找到relatedPivotKey的配置：　' . json_encode($field, 256));
-
-                        $model->save();
-                        $model->belongsToMany($refModel, $table, $foreignPivotKey, $relatedPivotKey)->sync($request->input($name));
+                        $refMethod = Arr::get($field, 'refMethod');
+                        if ($refMethod) {
+                            $model->save();
+                            $model->$refMethod()->sync($request->input($name));
+                        }
                 }
             }
         }

@@ -141,7 +141,7 @@ class BackendRequest  extends FormRequest
      */
     public function failedValidation(Validator $validator)
     {
-        $backendException = new BackendException("表单参数错误");
+        $backendException = new BackendException($validator->errors()->first());
         $backendException->setData($validator->errors());
         throw $backendException;
     }

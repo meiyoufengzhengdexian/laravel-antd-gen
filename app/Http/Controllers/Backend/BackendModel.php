@@ -9,6 +9,8 @@
 namespace App\Http\Controllers\Backend;
 
 
+use App\Http\Controllers\Backend\City\CityModel;
+use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
 
 class BackendModel extends Model

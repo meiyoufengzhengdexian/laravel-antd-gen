@@ -3,7 +3,7 @@
 orderBy: `created_at` desc, `id` asc
 perPage: 20
 
-list:
+fields:
   - name: id
     search: true
 
@@ -18,3 +18,7 @@ list:
 
   - name: status
     search: true
+
+  - name: tag
+    search: true
+    method: CateModel@formatTags
