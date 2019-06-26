@@ -9,7 +9,6 @@
 namespace App\Http\Controllers\Backend\Cate;
 
 
-
 use App\Http\Controllers\Backend\BackendModel;
 use App\Http\Controllers\Backend\City\CityModel;
 use App\Http\Controllers\Backend\Tag\TagModel;
@@ -35,7 +34,7 @@ class CateModel extends BackendModel
 
     public function formatTags($value)
     {
-        if(!$value){
+        if (!$value) {
             return [];
         }
         return $value->pluck('tag_id');

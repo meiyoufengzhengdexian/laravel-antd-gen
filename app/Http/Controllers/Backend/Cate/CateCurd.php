@@ -84,7 +84,7 @@ trait CateCurd
         $field = array_column($tableColumns, 'name');
         $list = $query->select($field)->paginate($prePage);
 
-        foreach($list as $item){
+        foreach($list as $item) {
             foreach($config['fields'] as $field){
                 if(!isset($field['method'])){
                     continue;
@@ -188,7 +188,6 @@ trait CateCurd
                     $query->whereBetween($column['name'], $searchKey[0], $searchKey[1]);
                     break;
                 case "enums":
-
                     if ($searchKey && !is_array($searchKey)) {
                         throw new BackendException("枚举类型应为二维数组");
                     }
