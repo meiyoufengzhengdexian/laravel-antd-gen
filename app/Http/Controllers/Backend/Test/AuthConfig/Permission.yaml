@@ -1,0 +1,19 @@
+permission:
+  -
+    name: backend.test.all
+    desc: 所有权限
+  -
+    name: backend.test.index
+    desc: 查看列表权限
+  -
+    name: backend.test.store
+    desc: 新建保存
+  -
+    name: backend.test.update
+    desc: 更新
+  -
+    name: backend.test.destroy
+    desc: 删除
+  -
+    name: backend.test.all
+    desc: 所有权限

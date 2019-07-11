@@ -9,7 +9,7 @@
 namespace App\Http\Controllers\Backend\Lib;
 
 
-use App\Http\Backend\BackendException;
+use App\Http\Controllers\Backend\BackendException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

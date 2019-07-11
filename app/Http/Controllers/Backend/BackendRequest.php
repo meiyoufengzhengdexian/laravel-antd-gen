@@ -61,7 +61,7 @@ class BackendRequest  extends FormRequest
         $action = $route->getAction();
 
         //获取别名， 用户权限判断
-        $as = array_get($action, 'as');
+        $as = Arr::get($action, 'as');
 
         if (!$as) {
             return false;

@@ -52,8 +52,8 @@ trait CateCurd
         return true;
     }
 
-
     /**
+     * 列表
      * @param CateIndexRequest $request
      * @return \App\Http\Resources\SuccessResource
      * @throws BackendException

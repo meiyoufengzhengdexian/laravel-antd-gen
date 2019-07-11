@@ -1,0 +1,24 @@
+# 列表页
+---
+orderBy: `created_at` desc, `id` asc
+perPage: 20
+
+fields:
+  - name: id
+    search: true
+
+  - name: name
+    search: true
+
+  - name: city
+    search: true
+
+  - name: created_at
+    search: true
+
+  - name: status
+    search: true
+
+  - name: tag
+    search: true
+    method: CateModel@formatTags

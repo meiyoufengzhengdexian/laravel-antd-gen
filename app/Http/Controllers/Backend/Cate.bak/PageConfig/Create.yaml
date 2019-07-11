@@ -1,0 +1,37 @@
+# 创建表单页面
+
+---
+layout: center
+fields:
+  - name: name
+    type: text
+
+  - name: as
+    type: text
+
+  - name: pid
+    type: select
+
+  - name: city
+    type: select
+    options:
+      - type remote
+      - url https://randomuser.me/api/?results=5
+      - text item.name
+      - key item.id
+
+  - name: tag
+    type: checkbox
+    options:
+      - text 热门
+        value 1
+      - text: 最新
+        value: 0
+
+  - name: status
+    type: radio
+    options:
+      - text: 开
+        value: 1
+      - text: 关
+        value: 0

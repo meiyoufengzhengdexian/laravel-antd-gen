@@ -1,0 +1,33 @@
+fields:
+  -
+    name: id
+    as: id
+    type: int
+    rules:
+      -
+        message: id不能为空
+        rule: required
+  -
+    name: name
+    as: 名称
+    type: int
+    rules:
+      -
+        message: 名称不能为空
+        rule: required
+  -
+    name: start_at
+    as: 开始时间
+    type: datetime
+    rules:
+      -
+        message: 开始时间不能为空
+        rule: required
+  -
+    name: end_at
+    as: 截止时间
+    type: datetime
+    rules:
+      -
+        message: 截止时间不能为空
+        rule: required

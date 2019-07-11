@@ -1,0 +1,87 @@
+# 数据库字段
+---
+fields:
+  - name: id
+    as: id
+    type: int
+
+  - name: name
+    as: 名称
+    type: text
+    rules:
+      - message: 名称不能为空
+        rule: required
+      - message: 名称最大长度为255个字符
+        rule: max:255
+
+  - name: as
+    as: 别名
+    type: text
+    rules:
+      - message: 别名不能为空
+        rule: required
+      - message: 别名最大长度为255个字符
+        rule: max:255
+      - message: 名称不能重复
+        rule: unique:cate,as
+  - name: city
+    as: 城市
+    type: ref
+    refType: belongsTo
+    refMethod: getCity
+    refField: name
+    rules:
+      - message: 城市不能为空
+        rule: required
+      - message: 该城市不存在
+        rule: exists:city,id
+  - name: pid
+    as: 上级分类
+    type: ref
+    refMethod: getParent
+    refType: belongsTo
+    model: \App\Http\Backend\Cate\CateModel::class
+    foreignKey: pid
+    refKey: id
+    rules:
+      - message: 上级分类必须存在
+        rule: required
+      - message: 该分类不存在
+        rule: exists:cate,id
+
+  - name: status
+    as: 状态
+    type: enum
+    options:
+      - content: 启用
+        value: 1
+        default: 1
+      - content: 禁用
+        value: 0
+    rules:
+      - message: 状态不能为空
+        rule: required
+      - message: 状态必须为 0 或者 1
+        rule: in:1,0
+
+  - name: tag
+    as: 标签
+    type: ref
+    refType: belongsToMany
+    refMethod: tags
+    model: App\Http\Backend\Tag\TagModel
+    table: cate_tag
+    foreignPivotKey: cate_id
+    relatedPivotKey: tag_id
+
+  - name: created_at
+    as: 创建时间
+    type: datetime
+
+  - name: updated_at
+    as: 创建时间
+    type: datetime
+
+  - name: deleted_at
+    as: 删除时间
+    type: datetime
