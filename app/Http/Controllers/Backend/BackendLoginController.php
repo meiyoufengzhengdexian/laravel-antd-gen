@@ -23,7 +23,7 @@ class BackendLoginController extends BackendController
                 'json'=> [
                     'grant_type'=>"password",
                     'client_id'=>"1",
-                    "client_secret" => "ga6DPlZkfiWdlt3smtMvqu866WgTuzu7JbQH1Akg",
+                    "client_secret" => "mPYGPH50mw2kWoqQyCwlFM8gMhKuKo5khtlndI3C",
                     "username" =>$userName,
                     'password' => $password,
                     'scope'=> 'backend'
