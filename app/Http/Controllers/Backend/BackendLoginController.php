@@ -18,7 +18,7 @@ class BackendLoginController extends BackendController
 
         $client = new Client();
 
-
+        try{
             $res = $client->post(url('/oauth/token'), [
                 'json'=> [
                     'grant_type'=>"password",
@@ -33,7 +33,7 @@ class BackendLoginController extends BackendController
             $data = json_decode($res->getBody(), true);
 
             return $this->success($data);
-        try{ }catch(ClientException $exception){
+         }catch(ClientException $exception){
             $httpCode = $exception->getCode();
             switch ($httpCode){
                 case "401":
