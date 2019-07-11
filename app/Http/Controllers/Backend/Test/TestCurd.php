@@ -64,6 +64,7 @@ trait TestCurd
         $this->order($query, $request, $indexConfig);
 
         $columnConfig = $this->getConfig('Test.Column');
+        dd($columnConfig);
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
@@ -275,8 +276,6 @@ trait TestCurd
 
     public static function mergerConfig($columnConfig, $config)
     {
-
-        dd($config);
         foreach ($config['fields'] as $key => $field) {
             $data = array_filter($columnConfig['fields'], function ($item) use ($field) {
                 return Arr::get($item, 'name') == Arr::get($field, 'name');
