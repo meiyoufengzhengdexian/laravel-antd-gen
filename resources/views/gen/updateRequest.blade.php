@@ -37,7 +37,7 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest extends BackendR
     public function rules()
     {
         $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
-        $column = Arr::get($columnConfig, 'column');
+        $column = Arr::get($columnConfig, 'fields');
         $returnRule = $this->makeRuleAndMessage($column);
         return $returnRule;
     }

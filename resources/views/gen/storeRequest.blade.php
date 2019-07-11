@@ -39,8 +39,8 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest extends BackendRe
 
     public function rules()
     {
-        $columnConfig = $this->getConfig("Cate.Column");
-        $columns = Arr::get($columnConfig, 'column');
+        $columnConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.Column");
+        $columns = Arr::get($columnConfig, 'fields');
         $returnRule = $this->makeRuleAndMessage($columns);
         return $returnRule;
     }
