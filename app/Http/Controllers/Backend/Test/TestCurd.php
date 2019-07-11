@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend\Test;
 
 use App\Http\Controllers\Backend\BackendException;
@@ -43,7 +44,7 @@ trait TestCurd
 
 
     /**
-     * @param  TestIndexRequest $request
+     * @param TestIndexRequest $request
      * @return  \App\Http\Resources\SuccessResource
      * @throws  BackendException
      */
@@ -66,27 +67,27 @@ trait TestCurd
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
-        $tableColumns = array_filter($config['fields'], function($item){
+        $tableColumns = array_filter($config['fields'], function ($item) {
             return !isset($item['refMethod']);
         });
 
         $field = array_column($tableColumns, 'name');
         $list = $query->select($field)->paginate($prePage);
 
-        foreach($list as $item) {
-            foreach($config['fields'] as $field){
-                if(!isset($field['method'])){
+        foreach ($list as $item) {
+            foreach ($config['fields'] as $field) {
+                if (!isset($field['method'])) {
                     continue;
                 }
-                if(!strpos($field['method'], '@')){
+                if (!strpos($field['method'], '@')) {
                     continue;
                 }
 
                 $method = explode('@', $field['method']);
-                $object = app(__NAMESPACE__.'\\'.$method[0]);
-                if($field['refMethod']){
+                $object = app(__NAMESPACE__ . '\\' . $method[0]);
+                if ($field['refMethod']) {
                     $formatValue = $object->{$method[1]}($item->{$field['refMethod']}, $item, $field);
-                }else{
+                } else {
                     $formatValue = $object->{$method[1]}($item->{$field['name']}, $item, $field);
                 }
                 unset($item->{$field['name']});
@@ -101,7 +102,7 @@ trait TestCurd
 
     /**
      * @param  $query
-     * @param  Request $request
+     * @param Request $request
      * @param  $indexConfig
      * @throws  BackendException
      */
@@ -127,8 +128,8 @@ trait TestCurd
     }
 
     /**
-     * @param  Builder $query
-     * @param  Request $request
+     * @param Builder $query
+     * @param Request $request
      * @param  $indexConfig
      * @throws  BackendException
      */
@@ -188,8 +189,8 @@ trait TestCurd
 
     /**
      * 根据配置， 和请求参数进行排序
-     * @param  Builder $query
-     * @param  Request $request
+     * @param Builder $query
+     * @param Request $request
      * @param  $indexConfig
      * @throws  BackendException
      */
@@ -238,7 +239,7 @@ trait TestCurd
 
     /**
      * 创建页面
-     * @param  TestCreateRequest $request
+     * @param TestCreateRequest $request
      */
     public function create(TestCreateRequest $request)
     {
@@ -247,7 +248,7 @@ trait TestCurd
 
     /**
      * 保存
-     * @param  TestStoreRequest $request
+     * @param TestStoreRequest $request
      * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
     public function store(TestStoreRequest $request)
@@ -275,7 +276,7 @@ trait TestCurd
     public static function mergerConfig($columnConfig, $config)
     {
 
-        dd($columnConfig);
+//        foreach ($config['fields'] as $key => $field) {
         foreach ($config['fields'] as $key => $field) {
             $data = array_filter($columnConfig['fields'], function ($item) use ($field) {
                 return Arr::get($item, 'name') == Arr::get($field, 'name');
@@ -290,7 +291,7 @@ trait TestCurd
 
     /**
      * 显示页面
-     * @param  TestShowRequest $request
+     * @param TestShowRequest $request
      * @param  $id
      * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      * @throws  BackendException
@@ -338,7 +339,7 @@ trait TestCurd
 
     /**
      * 编辑页面
-     * @param  BackendRequest $request
+     * @param BackendRequest $request
      */
     public function edit(BackendRequest $request)
     {
@@ -347,7 +348,7 @@ trait TestCurd
 
     /**
      * 更新
-     * @param  TestUpdateRequest $request
+     * @param TestUpdateRequest $request
      * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
     public function update(TestUpdateRequest $request, $id)
@@ -380,7 +381,7 @@ trait TestCurd
 
     /**
      * @param  $id
-     * @param  TestDestroyRequest $request
+     * @param TestDestroyRequest $request
      * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
     public function destroy($id, TestDestroyRequest $request)
@@ -404,7 +405,7 @@ trait TestCurd
     }
 
     /**
-     * @param  Model $model
+     * @param Model $model
      * @return  bool
      */
     public function beForeDestroy(Model $model)
@@ -414,8 +415,8 @@ trait TestCurd
 
     /**
      * @param  $fieldsWithColumns
-     * @param  TestModel $model
-     * @param  Request $request
+     * @param TestModel $model
+     * @param Request $request
      * @return  TestModel
      * @throws  \Exception
      */
@@ -467,7 +468,7 @@ trait TestCurd
     }
 
     /**
-     * @param  mixed $entry
+     * @param mixed $entry
      */
     public function setEntry(Model $entry): void
     {
