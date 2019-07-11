@@ -13,6 +13,7 @@ class TestIndexRequest extends BackendRequest
     public function authorize()
     {
         $action = $this->getRouteAs();
-        return $this->checkAuth($action, "您没有创建权限: ". $action);
+
+        return $this->checkAuth($action, "您没有获取列表权限: ". $action);
     }
 }

@@ -13,6 +13,6 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest extends BackendRe
     public function authorize()
     {
         $action = $this->getRouteAs();
-        return $this->checkAuth($action, "您没有创建权限: ". $action);
+        return $this->checkAuth($action, "您没有查看列表权限: ". $action);
     }
 }
