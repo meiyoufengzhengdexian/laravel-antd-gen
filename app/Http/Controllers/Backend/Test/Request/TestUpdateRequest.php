@@ -38,7 +38,6 @@ class TestUpdateRequest extends BackendRequest
     {
         $columnConfig = $this->getConfig('Test.Column');
         $column = Arr::get($columnConfig, 'fields');
-        dd($column);
         $returnRule = $this->makeRuleAndMessage($column);
         return $returnRule;
     }
