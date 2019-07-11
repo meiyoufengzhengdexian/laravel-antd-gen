@@ -4,9 +4,6 @@ fields:
     as: id
     type: int
     rules:
-      -
-        message: id不能为空
-        rule: required
   -
     name: name
     as: 名称
