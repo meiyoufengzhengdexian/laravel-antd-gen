@@ -64,7 +64,7 @@ trait TestCurd
         $this->order($query, $request, $indexConfig);
 
         $columnConfig = $this->getConfig('Test.Column');
-        dd($columnConfig);
+
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
