@@ -32,6 +32,7 @@ class BackendLoginController extends BackendController
 
             $data = json_decode($res->getBody(), true);
 
+            dd($data);
             return $this->success($data);
         }catch(ClientException $exception){
             $httpCode = $exception->getCode();
