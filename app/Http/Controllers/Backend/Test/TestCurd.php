@@ -66,7 +66,6 @@ trait TestCurd
         $columnConfig = $this->getConfig('Test.Column');
 
 
-        dd($indexConfig);
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
         $tableColumns = array_filter($config['fields'], function ($item) {

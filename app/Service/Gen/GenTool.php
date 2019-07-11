@@ -39,7 +39,7 @@ class GenTool
 
     public static function getPageConfigFile($tableName, $prefix)
     {
-        $file = './app/Http/Controllers/Backend/' . GenTool::getDir($tableName).'/PageConfig/'.GenTool::getDir($tableName).$prefix.'.yaml';
+        $file = './app/Http/Controllers/Backend/' . GenTool::getDir($tableName).'/PageConfig/'.$prefix.'.yaml';
         return $file;
     }
 
