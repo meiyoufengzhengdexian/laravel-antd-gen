@@ -47,6 +47,5 @@ Route::group([
             Route::get('cateOptions', 'Cate\CateController@cateOptions');
             Route::get('tagOptions', 'Cate\CateController@tags');
         });
-
     });
 });
