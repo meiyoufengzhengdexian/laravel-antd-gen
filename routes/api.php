@@ -41,6 +41,7 @@ Route::group([
             ],
         ], function () {
             Route::resource('cate', 'Cate\CateController');
+            Route::resource('test', 'Cate\TestController');
             Route::get('currentUser', 'BackendLoginController@currentUser');
             Route::get('cityOptions', 'City\CityController@options');
             Route::get('cateOptions', 'Cate\CateController@cateOptions');

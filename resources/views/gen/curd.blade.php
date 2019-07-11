@@ -1,23 +1,17 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: x
- * Date: 19-5-10
- * Time: 下午9:51
- */
 
-namespace App\Http\Controllers\Backend\Cate;
+
+namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}};
 
 use App\Http\Controllers\Backend\BackendException;
 use App\Http\Controllers\Backend\BackendPermissionException;
 use App\Http\Controllers\Backend\BackendRequest;
 use App\Http\Controllers\Backend\BackendResource;
-use App\Http\Controllers\Backend\Cate\Request\CateCreateRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateDestroyRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateIndexRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateShowRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateStoreRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateUpdateRequest;
+use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}CreateRequest;
+use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest;
+use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest;
+use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}ShowRequest;
+use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest;
+use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest;
 use App\Http\Controllers\Backend\Lib\AuthResourceTrait;
 use App\Http\Controllers\Backend\Lib\ConfigTrait;
 use App\Http\Controllers\Backend\Lib\ToolTrait;
@@ -28,7 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-trait CateCurd
+trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 {
     protected $entry;
 
@@ -43,25 +37,25 @@ trait CateCurd
         // $query->where('admin_id', $admin->id);
     }
 
-    private function checkResourcePermission($admin, CateModel $cateModel)
+    private function checkResourcePermission($admin, {{\App\Service\Gen\GenTool::getDir($table)}}Model ${{\App\Service\Gen\GenTool::getDir($table)}}Model)
     {
         return true;
     }
 
 
     /**
-     * @param CateIndexRequest $request
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request
      * @return \App\Http\Resources\SuccessResource
      * @throws BackendException
      */
-    public function index(CateIndexRequest $request)
+    public function index({{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request)
     {
-        $indexConfig = $this->getConfig('Cate.PageConfig.Index');
+        $indexConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Index');
         $prePage = $request->input('perPage',
             Arr::get($indexConfig, 'perPage',
                 config('backend.defaultPerPage', 20)));
 
-        $query = CateModel::query();
+        $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
 
         $this->withRefData($query, $request, $indexConfig);
         $this->authRange($this->getNowAdmin(), $query);
@@ -69,7 +63,7 @@ trait CateCurd
         $this->search($query, $request, $indexConfig);
         $this->order($query, $request, $indexConfig);
 
-        $columnConfig = $this->getConfig('Cate.Column');
+        $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
@@ -120,7 +114,7 @@ trait CateCurd
             throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
-        $columnsConfig = $this->getConfig('Cate.Column');
+        $columnsConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
         $columns = Arr::get($columnsConfig, 'fields');
 
         $indexList = $this->withColumnData($fields, $columns);
@@ -147,7 +141,7 @@ trait CateCurd
             throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
-        $columnsConfig = $this->getConfig('Cate.Column');
+        $columnsConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
         $columns = Arr::get($columnsConfig, 'fields');
 
         $searchList = array_filter($fields, function ($item) {
@@ -245,28 +239,28 @@ trait CateCurd
 
     /**
      * 创建页面
-     * @param CateCreateRequest $request
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}CreateRequest $request
      */
-    public function create(CateCreateRequest $request)
+    public function create({{\App\Service\Gen\GenTool::getDir($table)}}CreateRequest $request)
     {
 
     }
 
     /**
      * 保存
-     * @param CateStoreRequest $request
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest $request
      * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function store(CateStoreRequest $request)
+    public function store({{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest $request)
     {
         //批量赋值
-        $createConfig = $this->getConfig('Cate.PageConfig.Create');
-        $columnConfig = $this->getConfig("Cate.Column");
+        $createConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Create');
+        $columnConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.Column");
         $fields = Arr::get($createConfig, 'fields');
         $columns = Arr::get($columnConfig, 'fields');
 
         $fieldsWithColumns = $this->withColumnData($fields, $columns);
-        $newModel = new CateModel();
+        $newModel = new {{\App\Service\Gen\GenTool::getDir($table)}}Model();
         try {
             DB::beginTransaction();
             $this->fillData($fieldsWithColumns, $newModel, $request);
@@ -296,17 +290,17 @@ trait CateCurd
 
     /**
      * 显示页面
-     * @param CateShowRequest $request
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}ShowRequest $request
      * @param $id
      * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      * @throws BackendException
      * @throws BackendPermissionException
      */
-    public function show(CateShowrequest $request, $id)
+    public function show({{\App\Service\Gen\GenTool::getDir($table)}}Showrequest $request, $id)
     {
-        $query = CateModel::query();
-        $editConfig = $this->getConfig('Cate.PageConfig.Edit');
-        $columnConfig = $this->getConfig('Cate.Column');
+        $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
+        $editConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Edit');
+        $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
         $config = self::mergerConfig($columnConfig, $editConfig);
 
         $this->withRefData($query, $request, $config);
@@ -353,18 +347,18 @@ trait CateCurd
 
     /**
      * 更新
-     * @param CateUpdateRequest $request
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest $request
      * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function update(CateUpdateRequest $request, $id)
+    public function update({{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest $request, $id)
     {
-        $model = CateModel::find($id);
+        $model = {{\App\Service\Gen\GenTool::getDir($table)}}Model::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
 
-        $editConfig = $this->getConfig("Cate.PageConfig.Edit");
-        $columnConfig = $this->getConfig('Cate.Column');
+        $editConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Edit");
+        $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
 
         $fields = Arr::get($editConfig, 'fields');
         $columns = Arr::get($columnConfig, 'fields');
@@ -386,12 +380,12 @@ trait CateCurd
 
     /**
      * @param $id
-     * @param CateDestroyRequest $request
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest $request
      * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function destroy($id, CateDestroyRequest $request)
+    public function destroy($id, {{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest $request)
     {
-        $model = CateModel::find($id);
+        $model = {{\App\Service\Gen\GenTool::getDir($table)}}Model::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
@@ -420,17 +414,17 @@ trait CateCurd
 
     /**
      * @param $fieldsWithColumns
-     * @param CateModel $model
+     * @param {{\App\Service\Gen\GenTool::getDir($table)}}Model $model
      * @param Request $request
-     * @return CateModel
+     * @return {{\App\Service\Gen\GenTool::getDir($table)}}Model
      * @throws \Exception
      */
-    public function fillData($fieldsWithColumns, CateModel $model, Request $request)
+    public function fillData($fieldsWithColumns, {{\App\Service\Gen\GenTool::getDir($table)}}Model $model, Request $request)
     {
         foreach ($fieldsWithColumns as $field) {
             $name = Arr::get($field, 'name');
             if (!$name) {
-                throw new BackendException("Cate.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
+                throw new BackendException("{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
             }
 
             if (method_exists($model, 'set' . ucfirst($name))) {

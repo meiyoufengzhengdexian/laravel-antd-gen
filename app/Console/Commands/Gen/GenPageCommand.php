@@ -44,6 +44,9 @@ class GenPageCommand extends Command
             $tableName = $this->ask('请输入表命');
         } while (!$tableName);
 
+        if(!is_dir('./app/Http/Controllers/Backend/'.GenTool::getDir($tableName).'/PageConfig')){
+            mkdir('./app/Http/Controllers/Backend/'.GenTool::getDir($tableName).'/PageConfig');
+        }
         if (file_exists(GenTool::getPageConfigFile($tableName, 'Index'))) {
             do {
                 $confirm = $this->ask('视图配置文件已经存在，是否重新生成? y/n');
@@ -51,9 +54,14 @@ class GenPageCommand extends Command
 
             if ($confirm == 'y') {
                 GenPageConfig::index($tableName, $this);
+                GenPageConfig::create($tableName, $this);
+                GenPageConfig::edit($tableName, $this);
             }
         } else {
             GenPageConfig::index($tableName, $this);
+            GenPageConfig::create($tableName, $this);
+            GenPageConfig::edit($tableName, $this);
         }
+
     }
 }

@@ -15,16 +15,16 @@ fields:
   - name: city
     type: select
     options:
-      - type remote
-      - url https://randomuser.me/api/?results=5
-      - text item.name
-      - key item.id
+       type: remote
+       url: https://randomuser.me/api/?results=5
+       text: item.name
+       key: item.id
 
   - name: tag
     type: checkbox
     options:
-      - text 热门
-        value 1
+      - text: 热门
+        value: 1
       - text: 最新
         value: 0
 

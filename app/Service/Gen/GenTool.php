@@ -43,6 +43,17 @@ class GenTool
         return $file;
     }
 
+    public static function getCrudFile($tableName)
+    {
+        $file = './app/Http/Controllers/Backend/' . GenTool::getDir($tableName)."/".GenTool::getDir($tableName).'Curd.php';
+        return $file;
+
+    }
+    public static function getControllerFile($tableName)
+    {
+        $file = './app/Http/Controllers/Backend/' . GenTool::getDir($tableName)."/".GenTool::getDir($tableName).'Controller.php';
+        return $file;
+    }
     public static function getRefTypeList()
     {
         return [
@@ -60,6 +71,7 @@ class GenTool
             return $id;
         }
     }
+
 
 
 }

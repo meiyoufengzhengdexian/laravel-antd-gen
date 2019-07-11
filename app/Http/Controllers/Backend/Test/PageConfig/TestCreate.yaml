@@ -1,0 +1,14 @@
+fields:
+  -
+    name: id
+    type: int
+  -
+    name: name
+    type: int
+  -
+    name: start_at
+    type: datetime
+  -
+    name: end_at
+    type: datetime
+layout: center

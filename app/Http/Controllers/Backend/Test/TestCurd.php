@@ -1,23 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: x
- * Date: 19-5-10
- * Time: 下午9:51
- */
-
-namespace App\Http\Controllers\Backend\Cate;
+namespace App\Http\Controllers\Backend\Test;
 
 use App\Http\Controllers\Backend\BackendException;
 use App\Http\Controllers\Backend\BackendPermissionException;
 use App\Http\Controllers\Backend\BackendRequest;
 use App\Http\Controllers\Backend\BackendResource;
-use App\Http\Controllers\Backend\Cate\Request\CateCreateRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateDestroyRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateIndexRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateShowRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateStoreRequest;
-use App\Http\Controllers\Backend\Cate\Request\CateUpdateRequest;
+use App\Http\Controllers\Backend\Test\Request\TestCreateRequest;
+use App\Http\Controllers\Backend\Test\Request\TestDestroyRequest;
+use App\Http\Controllers\Backend\Test\Request\TestIndexRequest;
+use App\Http\Controllers\Backend\Test\Request\TestShowRequest;
+use App\Http\Controllers\Backend\Test\Request\TestStoreRequest;
+use App\Http\Controllers\Backend\Test\Request\TestUpdateRequest;
 use App\Http\Controllers\Backend\Lib\AuthResourceTrait;
 use App\Http\Controllers\Backend\Lib\ConfigTrait;
 use App\Http\Controllers\Backend\Lib\ToolTrait;
@@ -28,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-trait CateCurd
+trait TestCurd
 {
     protected $entry;
 
@@ -43,25 +36,25 @@ trait CateCurd
         // $query->where('admin_id', $admin->id);
     }
 
-    private function checkResourcePermission($admin, CateModel $cateModel)
+    private function checkResourcePermission($admin, TestModel $TestModel)
     {
         return true;
     }
 
 
     /**
-     * @param CateIndexRequest $request
-     * @return \App\Http\Resources\SuccessResource
-     * @throws BackendException
+     * @param  TestIndexRequest $request
+     * @return  \App\Http\Resources\SuccessResource
+     * @throws  BackendException
      */
-    public function index(CateIndexRequest $request)
+    public function index(TestIndexRequest $request)
     {
-        $indexConfig = $this->getConfig('Cate.PageConfig.Index');
+        $indexConfig = $this->getConfig('Test.PageConfig.Index');
         $prePage = $request->input('perPage',
             Arr::get($indexConfig, 'perPage',
                 config('backend.defaultPerPage', 20)));
 
-        $query = CateModel::query();
+        $query = TestModel::query();
 
         $this->withRefData($query, $request, $indexConfig);
         $this->authRange($this->getNowAdmin(), $query);
@@ -69,7 +62,7 @@ trait CateCurd
         $this->search($query, $request, $indexConfig);
         $this->order($query, $request, $indexConfig);
 
-        $columnConfig = $this->getConfig('Cate.Column');
+        $columnConfig = $this->getConfig('Test.Column');
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
@@ -107,10 +100,10 @@ trait CateCurd
     }
 
     /**
-     * @param $query
-     * @param Request $request
-     * @param $indexConfig
-     * @throws BackendException
+     * @param  $query
+     * @param  Request $request
+     * @param  $indexConfig
+     * @throws  BackendException
      */
     public function withRefData(Builder $query, Request $request, $indexConfig)
     {
@@ -120,7 +113,7 @@ trait CateCurd
             throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
-        $columnsConfig = $this->getConfig('Cate.Column');
+        $columnsConfig = $this->getConfig('Test.Column');
         $columns = Arr::get($columnsConfig, 'fields');
 
         $indexList = $this->withColumnData($fields, $columns);
@@ -134,10 +127,10 @@ trait CateCurd
     }
 
     /**
-     * @param Builder $query
-     * @param Request $request
-     * @param $indexConfig
-     * @throws BackendException
+     * @param  Builder $query
+     * @param  Request $request
+     * @param  $indexConfig
+     * @throws  BackendException
      */
     public function search(Builder $query, Request $request, $indexConfig)
     {
@@ -147,7 +140,7 @@ trait CateCurd
             throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
-        $columnsConfig = $this->getConfig('Cate.Column');
+        $columnsConfig = $this->getConfig('Test.Column');
         $columns = Arr::get($columnsConfig, 'fields');
 
         $searchList = array_filter($fields, function ($item) {
@@ -195,10 +188,10 @@ trait CateCurd
 
     /**
      * 根据配置， 和请求参数进行排序
-     * @param Builder $query
-     * @param Request $request
-     * @param $indexConfig
-     * @throws BackendException
+     * @param  Builder $query
+     * @param  Request $request
+     * @param  $indexConfig
+     * @throws  BackendException
      */
     public function order(Builder $query, Request $request, $indexConfig)
     {
@@ -245,28 +238,28 @@ trait CateCurd
 
     /**
      * 创建页面
-     * @param CateCreateRequest $request
+     * @param  TestCreateRequest $request
      */
-    public function create(CateCreateRequest $request)
+    public function create(TestCreateRequest $request)
     {
 
     }
 
     /**
      * 保存
-     * @param CateStoreRequest $request
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @param  TestStoreRequest $request
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function store(CateStoreRequest $request)
+    public function store(TestStoreRequest $request)
     {
         //批量赋值
-        $createConfig = $this->getConfig('Cate.PageConfig.Create');
-        $columnConfig = $this->getConfig("Cate.Column");
+        $createConfig = $this->getConfig('Test.PageConfig.Create');
+        $columnConfig = $this->getConfig("Test.Column");
         $fields = Arr::get($createConfig, 'fields');
         $columns = Arr::get($columnConfig, 'fields');
 
         $fieldsWithColumns = $this->withColumnData($fields, $columns);
-        $newModel = new CateModel();
+        $newModel = new TestModel();
         try {
             DB::beginTransaction();
             $this->fillData($fieldsWithColumns, $newModel, $request);
@@ -296,17 +289,17 @@ trait CateCurd
 
     /**
      * 显示页面
-     * @param CateShowRequest $request
-     * @param $id
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
-     * @throws BackendException
-     * @throws BackendPermissionException
+     * @param  TestShowRequest $request
+     * @param  $id
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @throws  BackendException
+     * @throws  BackendPermissionException
      */
-    public function show(CateShowrequest $request, $id)
+    public function show(TestShowrequest $request, $id)
     {
-        $query = CateModel::query();
-        $editConfig = $this->getConfig('Cate.PageConfig.Edit');
-        $columnConfig = $this->getConfig('Cate.Column');
+        $query = TestModel::query();
+        $editConfig = $this->getConfig('Test.PageConfig.Edit');
+        $columnConfig = $this->getConfig('Test.Column');
         $config = self::mergerConfig($columnConfig, $editConfig);
 
         $this->withRefData($query, $request, $config);
@@ -344,7 +337,7 @@ trait CateCurd
 
     /**
      * 编辑页面
-     * @param BackendRequest $request
+     * @param  BackendRequest $request
      */
     public function edit(BackendRequest $request)
     {
@@ -353,18 +346,18 @@ trait CateCurd
 
     /**
      * 更新
-     * @param CateUpdateRequest $request
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @param  TestUpdateRequest $request
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function update(CateUpdateRequest $request, $id)
+    public function update(TestUpdateRequest $request, $id)
     {
-        $model = CateModel::find($id);
+        $model = TestModel::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
 
-        $editConfig = $this->getConfig("Cate.PageConfig.Edit");
-        $columnConfig = $this->getConfig('Cate.Column');
+        $editConfig = $this->getConfig("Test.PageConfig.Edit");
+        $columnConfig = $this->getConfig('Test.Column');
 
         $fields = Arr::get($editConfig, 'fields');
         $columns = Arr::get($columnConfig, 'fields');
@@ -385,13 +378,13 @@ trait CateCurd
 
 
     /**
-     * @param $id
-     * @param CateDestroyRequest $request
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @param  $id
+     * @param  TestDestroyRequest $request
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function destroy($id, CateDestroyRequest $request)
+    public function destroy($id, TestDestroyRequest $request)
     {
-        $model = CateModel::find($id);
+        $model = TestModel::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
@@ -410,8 +403,8 @@ trait CateCurd
     }
 
     /**
-     * @param Model $model
-     * @return bool
+     * @param  Model $model
+     * @return  bool
      */
     public function beForeDestroy(Model $model)
     {
@@ -419,18 +412,18 @@ trait CateCurd
     }
 
     /**
-     * @param $fieldsWithColumns
-     * @param CateModel $model
-     * @param Request $request
-     * @return CateModel
-     * @throws \Exception
+     * @param  $fieldsWithColumns
+     * @param  TestModel $model
+     * @param  Request $request
+     * @return  TestModel
+     * @throws  \Exception
      */
-    public function fillData($fieldsWithColumns, CateModel $model, Request $request)
+    public function fillData($fieldsWithColumns, TestModel $model, Request $request)
     {
         foreach ($fieldsWithColumns as $field) {
             $name = Arr::get($field, 'name');
             if (!$name) {
-                throw new BackendException("Cate.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
+                throw new BackendException("Test.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
             }
 
             if (method_exists($model, 'set' . ucfirst($name))) {
@@ -465,7 +458,7 @@ trait CateCurd
 
 
     /**
-     * @return mixed
+     * @return  mixed
      */
     public function getEntry(): Model
     {
@@ -473,7 +466,7 @@ trait CateCurd
     }
 
     /**
-     * @param mixed $entry
+     * @param  mixed $entry
      */
     public function setEntry(Model $entry): void
     {

@@ -1,0 +1,15 @@
+orderBy: '`created_at` desc, `id` asc'
+perPage: 20
+fields:
+  -
+    search: true
+    name: id
+  -
+    search: true
+    name: name
+  -
+    search: true
+    name: start_at
+  -
+    search: true
+    name: end_at
