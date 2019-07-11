@@ -39,7 +39,7 @@ class TestStoreRequest extends BackendRequest
     public function rules()
     {
         $columnConfig = $this->getConfig("Cate.Column");
-        $columns = Arr::get($columnConfig, 'column');
+        $columns = Arr::get($columnConfig, 'fields');
         $returnRule = $this->makeRuleAndMessage($columns);
         return $returnRule;
     }
