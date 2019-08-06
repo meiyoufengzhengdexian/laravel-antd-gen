@@ -31,24 +31,23 @@ class GenPageConfig
         $indexConfig['perPage'] = 20;
         $indexConfig['fields'] = [];
 
-        foreach ($fields as $field) {
+        foreach ($fields as $name => $field) {
             $fieldInfo = [];
 
-            $display = $ctx->ask($field['name'].' 是否显示? y/n');
+            $display = $ctx->ask($name.' 是否显示? y/n');
             $display = !$display ? 'y' : 'n';
 
             if (!$display == 'n') {
                 continue;
             }
 
-            $search = $ctx->ask($field['name'].' 是否开启搜索? y/n');
+            $search = $ctx->ask($name.' 是否可以被搜索? y/n');
 
             $search = !$search ? 'y' : $display;
 
             $fieldInfo['search'] = !!$search;
-            $fieldInfo['name'] = $field['name'];
 
-            $indexConfig['fields'][] = $fieldInfo;
+            $indexConfig['fields'][$name] = $fieldInfo;
         }
 
 
@@ -76,9 +75,9 @@ class GenPageConfig
         $createConfig['fields'] = [];
         $createConfig['layout'] = 'center';
 
-        foreach ($fields as $field) {
+        foreach ($fields as $name => $field) {
             $filedInfo = [];
-            $display = $ctx->ask($field['name'] . ' 要显示在创建表单中吗? y/n');
+            $display = $ctx->ask($name . ' 要显示在创建表单中吗? y/n');
 
             $display = !$display ? 'y' : $display;
 
@@ -86,7 +85,6 @@ class GenPageConfig
                 continue;
             }
 
-            $filedInfo['name'] = $field['name'];
             $filedInfo['type'] = $field['type'];
 
             switch ($filedInfo['type']) {
@@ -98,7 +96,7 @@ class GenPageConfig
                     ];
             }
 
-            $createConfig['fields'][] = $filedInfo;
+            $createConfig['fields'][$name] = $filedInfo;
         }
 
         file_put_contents(GenTool::getPageConfigFile($table, 'Create'),
@@ -129,9 +127,9 @@ class GenPageConfig
         $editConfig['layout'] = 'center';
 
 
-        foreach ($fields as $field) {
+        foreach ($fields as $name => $field) {
             $filedInfo = [];
-            $display = $ctx->ask($field['name'] . ' 要显示在创建表单中吗? y/n');
+            $display = $ctx->ask($name . ' 要显示在创建表单中吗? y/n');
 
             $display = !$display ? 'y' : $display;
 
@@ -139,7 +137,6 @@ class GenPageConfig
                 continue;
             }
 
-            $filedInfo['name'] = $field['name'];
             $filedInfo['type'] = $field['type'];
 
             switch ($filedInfo['type']) {
@@ -151,7 +148,7 @@ class GenPageConfig
                     ];
             }
 
-            $editConfig['fields'][] = $filedInfo;
+            $editConfig['fields'][$name] = $filedInfo;
         }
 
         file_put_contents(GenTool::getPageConfigFile($table, 'Edit'),

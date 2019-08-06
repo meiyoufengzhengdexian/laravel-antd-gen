@@ -1,10 +1,12 @@
 fields:
-  -
-    name: id
+  id:
     as: id
     type: text
-  -
-    name: name
+    rules:
+      -
+        message: id不能为空
+        rule: required
+  name:
     as: name
     type: text
     rules:

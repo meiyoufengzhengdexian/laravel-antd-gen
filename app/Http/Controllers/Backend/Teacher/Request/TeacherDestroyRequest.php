@@ -27,10 +27,6 @@ class TeacherDestroyRequest extends BackendRequest
         }
 
         $action = $this->getRouteAs();
-        if ($this->checkAuth($action, "您没有权限 : " . $action)) {
-            return true;
-        }
-
-        return false;
+        return $this->checkAuth($action, "您没有权限 : " . $action);
     }
 }

@@ -1,9 +1,8 @@
 orderBy: '`created_at` desc, `id` asc'
 perPage: 20
 fields:
-  -
+  id:
     search: true
-    name: id
-  -
+    type: xxx
+  name:
     search: true
-    name: name

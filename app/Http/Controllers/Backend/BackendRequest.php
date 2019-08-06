@@ -94,7 +94,7 @@ class BackendRequest  extends FormRequest
     public function makeRuleAndMessage($ruleConfig)
     {
         $returnRule = [];
-        foreach ($ruleConfig as $column) {
+        foreach ($ruleConfig as $name => $column) {
             $rules = Arr::get($column, 'rules', false);
             if (!$rules) {
                 continue;
@@ -113,15 +113,15 @@ class BackendRequest  extends FormRequest
                 }
 
                 if (isset($returnRule[Arr::get($column, 'name')])) {
-                    $returnRule[Arr::get($column, 'name')] .= "|" . $ruleStr;
+                    $returnRule[$name] .= "|" . $ruleStr;
                 } else {
-                    $returnRule[Arr::get($column, 'name')] = $ruleStr;
+                    $returnRule[$name]= $ruleStr;
                 }
 
                 $message = Arr::get($rule, 'message');
 
                 if ($message) {
-                    $this->messageList[Arr::get($column, 'name') . ".$ruleMethod"] = $message;
+                    $this->messageList[$name . ".$ruleMethod"] = $message;
                 }
             }
         }

@@ -38,28 +38,8 @@ trait ConfigTrait
      * @param $columns
      * @return array
      */
-    public function withColumnData($columns, $list): array
+    public function withColumnData($list, $columns): array
     {
-        //获取数据类型
-        foreach ($columns as $key => $item) {
-            $filter = array_filter($list, function ($column) use ($item) {
-                return Arr::get($column, 'name', '##collumn_name')
-                    == Arr::get($item, 'name', "##index_name");
-            });
-
-            if ($filter) {
-                $filter = array_values($filter);
-            }
-
-            if (count($filter) < 1) {
-                $list[$key]['type'] = "text";
-            } else {
-                $list[$key] = array_merge($item, $filter[0]);
-            }
-        }
-
-
-        return $list;
-
+        return array_merge_recursive($columns, $list);
     }
 }

@@ -81,7 +81,7 @@ class GenBase
             }
 
             $filedInfo = [
-                'name' => $field->Field,
+//                'name' => $field->Field,
                 'as' => $field->Zh,
                 'type' => $type
             ];
@@ -157,7 +157,7 @@ class GenBase
                 ];
             }
 
-            $fieldsYaml['fields'][] = $filedInfo;
+            $fieldsYaml['fields'][$field->Field] = $filedInfo;
         }
 
         file_put_contents(GenTool::getTableConfigFile($tableName), Yaml::dump($fieldsYaml, 500, 2));

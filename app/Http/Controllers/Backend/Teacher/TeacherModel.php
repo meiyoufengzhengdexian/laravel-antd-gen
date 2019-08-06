@@ -8,4 +8,7 @@ class TeacherModel extends BackendModel
 {
     protected $table = 'teacher';
     use SoftDeletes;
+
+        
+        
 }

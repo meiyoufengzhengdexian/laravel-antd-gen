@@ -9,7 +9,7 @@ class TeacherShowRequest extends BackendRequest
 {
     public function authorize()
     {
-        if($this->checkAuth('backend.teacherr.all', '')){
+        if($this->checkAuth('backend.teacher.all', '')){
             return true;
         }
         $action = $this->getRouteAs();

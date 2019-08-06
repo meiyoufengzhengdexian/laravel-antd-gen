@@ -1,5 +1,4 @@
 
-
 namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}};
 
 use App\Http\Controllers\Backend\BackendException;
@@ -44,12 +43,22 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
 
     /**
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request
-     * @return \App\Http\Resources\SuccessResource
-     * @throws BackendException
-     */
+    * @param  {{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request
+    * @return  \App\Http\Resources\SuccessResource
+    * @throws BackendException
+    */
     public function index({{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request)
     {
+
+        return $this->success($this->get{{\App\Service\Gen\GenTool::getDir($table)}}List($request));
+    }
+
+    /**
+    * @param Request $request
+    * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    * @throws BackendException
+    */
+    public function get{{\App\Service\Gen\GenTool::getDir($table)}}List(Request $request){
         $indexConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Index');
         $prePage = $request->input('perPage',
             Arr::get($indexConfig, 'perPage',
@@ -67,11 +76,9 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
-        $tableColumns = array_filter($config['fields'], function($item){
-            return !isset($item['refMethod']);
-        });
+        $tableColumns = $config['fields'];
 
-        $field = array_column($tableColumns, 'name');
+        $field = array_keys($tableColumns);
         $list = $query->select($field)->paginate($prePage);
 
         foreach($list as $item) {
@@ -96,7 +103,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
             }
         }
 
-        return $this->success($list);
+        return $list;
 
     }
 
@@ -154,9 +161,9 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
         $searchList = $this->withColumnData($searchList, $columns);
 
-        foreach ($searchList as $column) {
+        foreach ($searchList as $name=> $column) {
 
-            $searchKey = $this->getInput($request, $column['name']);
+            $searchKey = $this->getInput($request, $name);
             if ($searchKey === false || is_null($searchKey)) {
                 continue;
             }
@@ -164,10 +171,10 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
             switch ($column['type']) {
                 case "int":
                 case "enum":
-                    $query->where($column['name'], $searchKey);
+                    $query->where($name, $searchKey);
                     break;
                 case "text":
-                    $query->where($column['name'], 'like', "$searchKey%");
+                    $query->where($name, 'like', "$searchKey%");
                     break;
                 case "datetime":
                 case "date":
@@ -179,13 +186,13 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
                     if (count($searchKey) != 2) {
                         throw new BackendException("datetime, date, time 类型应为二维数组");
                     }
-                    $query->whereBetween($column['name'], $searchKey[0], $searchKey[1]);
+                    $query->whereBetween($name, $searchKey[0], $searchKey[1]);
                     break;
                 case "enums":
                     if ($searchKey && !is_array($searchKey)) {
                         throw new BackendException("枚举类型应为二维数组");
                     }
-                    $query->where($column['name'], $searchKey);
+                    $query->where($name, $searchKey);
             }
         }
 
@@ -302,6 +309,20 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
      */
     public function show({{\App\Service\Gen\GenTool::getDir($table)}}Showrequest $request, $id)
     {
+        $data = $this->get{{\App\Service\Gen\GenTool::getDir($table)}}($id, $request);
+
+        if (!$data) {
+            return $this->failed("未找到id：" . $id);
+        }
+
+        if (!$this->checkResourcePermission($this->getNowAdmin(), $data)) {
+            throw new BackendPermissionException("抱歉您没有权限");
+        }
+
+        return $this->success($data);
+    }
+
+    public function get{{\App\Service\Gen\GenTool::getDir($table)}}($id, Request $request){
         $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
         $editConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Edit');
         $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
@@ -310,7 +331,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
         $this->withRefData($query, $request, $config);
         $data = $query->where('id', $id)->first();
 
-        foreach ($config['fields'] as $item) {
+        foreach ($config['fields'] as $name=>$item) {
             if (!isset($item['method'])) {
                 continue;
             }
@@ -322,22 +343,14 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
             $object = app(__NAMESPACE__ . '\\' . $method[0]);
             if ($item['refMethod']) {
                 $formatValue = $object->{$method[1]}($data->{$item['refMethod']}, $data, $item);
-                unset($data->{$item['name']});
-                $data->{$item['name']} = $formatValue;
+                unset($data->{$name});
+                $data->{$name} = $formatValue;
             } else {
-                $object->{$method[1]}($data->item['name'], $data, $item);
+                $object->{$method[1]}($data->{$name}, $data, $item);
             }
         }
 
-        if (!$data) {
-            return $this->failed("未找到id：" . $id);
-        }
-
-        if (!$this->checkResourcePermission($this->getNowAdmin(), $data)) {
-            throw new BackendPermissionException("抱歉您没有权限");
-        }
-
-        return $this->success($data);
+        return $data;
     }
 
     /**
@@ -425,8 +438,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
      */
     public function fillData($fieldsWithColumns, {{\App\Service\Gen\GenTool::getDir($table)}}Model $model, Request $request)
     {
-        foreach ($fieldsWithColumns as $field) {
-            $name = Arr::get($field, 'name');
+        foreach ($fieldsWithColumns as $name => $field) {
             if (!$name) {
                 throw new BackendException("{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
             }

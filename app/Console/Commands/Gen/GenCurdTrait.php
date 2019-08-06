@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Console\Commands\Gen;
+
+use App\Service\Gen\GenController;
+use App\Service\Gen\GenTool;
+use Illuminate\Console\Command;
+
+class GenCurdTrait extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'gen:curd';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = '生成crudTrait';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        do {
+            $tableName = $this->ask('请输入表名');
+        } while (!$tableName);
+
+        if(file_exists(GenTool::getControllerFile($tableName))){
+            do{
+                $confirm = $this->ask('CurdTrait已经存在， 是否覆盖? y/n');
+            }while(!in_array($confirm, ['y', 'n']));
+
+            if($confirm == 'y'){
+                GenController::crud($tableName);
+            }
+        }else{
+            GenController::crud($tableName);
+        }
+
+        return true;
+    }
+}

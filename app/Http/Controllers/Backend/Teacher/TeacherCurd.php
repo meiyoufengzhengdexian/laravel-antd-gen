@@ -43,12 +43,22 @@ trait TeacherCurd
 
 
     /**
-     * @param  TeacherIndexRequest $request
-     * @return  \App\Http\Resources\SuccessResource
-     * @throws  BackendException
-     */
+    * @param    TeacherIndexRequest $request
+    * @return    \App\Http\Resources\SuccessResource
+    * @throws  BackendException
+    */
     public function index(TeacherIndexRequest $request)
     {
+
+        return $this->success($this->getTeacherList($request));
+    }
+
+    /**
+    * @param  Request $request
+    * @return  \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    * @throws  BackendException
+    */
+    public function getTeacherList(Request $request){
         $indexConfig = $this->getConfig('Teacher.PageConfig.Index');
         $prePage = $request->input('perPage',
             Arr::get($indexConfig, 'perPage',
@@ -66,11 +76,9 @@ trait TeacherCurd
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
-        $tableColumns = array_filter($config['fields'], function($item){
-            return !isset($item['refMethod']);
-        });
+        $tableColumns = $config['fields'];
 
-        $field = array_column($tableColumns, 'name');
+        $field = array_keys($tableColumns);
         $list = $query->select($field)->paginate($prePage);
 
         foreach($list as $item) {
@@ -95,7 +103,7 @@ trait TeacherCurd
             }
         }
 
-        return $this->success($list);
+        return $list;
 
     }
 
@@ -122,7 +130,11 @@ trait TeacherCurd
             if (Arr::get($column, 'type') != 'ref') {
                 continue;
             }
-            $query->with(Arr::get($column, 'refMethod') . ":" . Arr::get($column, 'refField', '*'));
+            $refField =Arr::get($column, 'refField', '*');
+            if($refField != "*" && strpos($refField, 'id') ===false){
+                $refField .= ",id";
+            }
+            $query->with(Arr::get($column, 'refMethod') . ":" . $refField);
         }
     }
 
@@ -149,9 +161,8 @@ trait TeacherCurd
 
         $searchList = $this->withColumnData($searchList, $columns);
 
-        foreach ($searchList as $column) {
-
-            $searchKey = $this->getInput($request, $column['name']);
+        foreach ($searchList as $name=> $column) {
+            $searchKey = $this->getInput($request, $name);
             if ($searchKey === false || is_null($searchKey)) {
                 continue;
             }
@@ -159,10 +170,10 @@ trait TeacherCurd
             switch ($column['type']) {
                 case "int":
                 case "enum":
-                    $query->where($column['name'], $searchKey);
+                    $query->where($name, $searchKey);
                     break;
                 case "text":
-                    $query->where($column['name'], 'like', "$searchKey%");
+                    $query->where($name, 'like', "$searchKey%");
                     break;
                 case "datetime":
                 case "date":
@@ -174,13 +185,16 @@ trait TeacherCurd
                     if (count($searchKey) != 2) {
                         throw new BackendException("datetime, date, time 类型应为二维数组");
                     }
-                    $query->whereBetween($column['name'], $searchKey[0], $searchKey[1]);
+                    $query->whereBetween($name, $searchKey[0], $searchKey[1]);
                     break;
                 case "enums":
                     if ($searchKey && !is_array($searchKey)) {
                         throw new BackendException("枚举类型应为二维数组");
                     }
-                    $query->where($column['name'], $searchKey);
+                    $query->where($name, $searchKey);
+                    break;
+                default:
+                    $query->where($name, $searchKey);
             }
         }
 
@@ -297,6 +311,20 @@ trait TeacherCurd
      */
     public function show(TeacherShowrequest $request, $id)
     {
+        $data = $this->getTeacher($id, $request);
+
+        if (!$data) {
+            return $this->failed("未找到id：" . $id);
+        }
+
+        if (!$this->checkResourcePermission($this->getNowAdmin(), $data)) {
+            throw new BackendPermissionException("抱歉您没有权限");
+        }
+
+        return $this->success($data);
+    }
+
+    public function getTeacher($id, Request $request){
         $query = TeacherModel::query();
         $editConfig = $this->getConfig('Teacher.PageConfig.Edit');
         $columnConfig = $this->getConfig('Teacher.Column');
@@ -305,7 +333,7 @@ trait TeacherCurd
         $this->withRefData($query, $request, $config);
         $data = $query->where('id', $id)->first();
 
-        foreach ($config['fields'] as $item) {
+        foreach ($config['fields'] as $name=>$item) {
             if (!isset($item['method'])) {
                 continue;
             }
@@ -317,22 +345,14 @@ trait TeacherCurd
             $object = app(__NAMESPACE__ . '\\' . $method[0]);
             if ($item['refMethod']) {
                 $formatValue = $object->{$method[1]}($data->{$item['refMethod']}, $data, $item);
-                unset($data->{$item['name']});
-                $data->{$item['name']} = $formatValue;
+                unset($data->{$name});
+                $data->{$name} = $formatValue;
             } else {
-                $object->{$method[1]}($data->item['name'], $data, $item);
+                $object->{$method[1]}($data->{$name}, $data, $item);
             }
         }
 
-        if (!$data) {
-            return $this->failed("未找到分类id：" . $id);
-        }
-
-        if (!$this->checkResourcePermission($this->getNowAdmin(), $data)) {
-            throw new BackendPermissionException("抱歉您没有权限");
-        }
-
-        return $this->success($data);
+        return $data;
     }
 
     /**
@@ -420,8 +440,7 @@ trait TeacherCurd
      */
     public function fillData($fieldsWithColumns, TeacherModel $model, Request $request)
     {
-        foreach ($fieldsWithColumns as $field) {
-            $name = Arr::get($field, 'name');
+        foreach ($fieldsWithColumns as $name => $field) {
             if (!$name) {
                 throw new BackendException("Teacher.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
             }
