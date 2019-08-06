@@ -1,6 +1,5 @@
-
-
-namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request;
+<?php
+namespace App\Http\Controllers\Backend\Course\Request;
 
 
 use App\Http\Abilities;
@@ -12,7 +11,7 @@ use App\Http\Controllers\Backend\Lib\ConfigTrait;
 use App\Http\Controllers\Backend\Lib\ToolTrait;
 use Illuminate\Support\Arr;
 
-class {{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest extends BackendRequest
+class CourseStoreRequest extends BackendRequest
 {
     use ConfigTrait;
     use ToolTrait;
@@ -20,12 +19,12 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest extends BackendRe
 
 
     /**
-     * @return bool
-     * @throws \App\Http\Controllers\Backend\BackendException
+     * @return  bool
+     * @throws  \App\Http\Controllers\Backend\BackendException
      */
     public function authorize()
     {
-        if($this->checkAuth('backend.{{$table}}.all', '')){
+        if($this->checkAuth('backend.course.all', '')){
             return true;
         }
         $action = $this->getRouteAs();
@@ -34,7 +33,7 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest extends BackendRe
 
     public function rules()
     {
-        $columnConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.Column");
+        $columnConfig = $this->getConfig("Course.Column");
         $columns = Arr::get($columnConfig, 'fields');
         $returnRule = $this->makeRuleAndMessage($columns);
         return $returnRule;

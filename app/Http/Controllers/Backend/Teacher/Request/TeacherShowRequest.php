@@ -1,15 +1,15 @@
-
-namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request;
+<?php
+namespace App\Http\Controllers\Backend\Teacher\Request;
 
 
 
 use App\Http\Controllers\Backend\BackendRequest;
 
-class {{\App\Service\Gen\GenTool::getDir($table)}}ShowRequest extends BackendRequest
+class TeacherShowRequest extends BackendRequest
 {
     public function authorize()
     {
-        if($this->checkAuth('backend.{{$table}}.all', '')){
+        if($this->checkAuth('backend.teacherr.all', '')){
             return true;
         }
         $action = $this->getRouteAs();

@@ -1,0 +1,13 @@
+fields:
+  -
+    name: id
+    as: id
+    type: text
+  -
+    name: name
+    as: name
+    type: text
+    rules:
+      -
+        message: name不能为空
+        rule: required

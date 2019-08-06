@@ -3,12 +3,7 @@
 namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}};
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Backend\BackendModel;
-{{-- 关联模型引入 --}}
-@foreach($fields as $field)
-    @if(isset($field['model']))
-use {{ trim($field['model'], '\\') }};
-    @endif
-@endforeach
+
 
 class {{\App\Service\Gen\GenTool::getDir($table)}}Model extends BackendModel
 {
@@ -19,7 +14,7 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}Model extends BackendModel
     @if(isset($field['refMethod']) && $field['refMethod'] != 'belongsToMany')
     public function {{$field['refMethod']}}()
     {
-        return $this->{{trim($field['refType'])}}({{trim($field['model'], '\\')}}, '{{$field['name']}}', '{{$field['refKey']}}');
+        return $this->{{trim($field['refType'])}}(\{{trim($field['model'], '\\')}}::class, '{{$field['name']}}', '{{\Illuminate\Support\Arr::get($field, 'refKey', 'id')}}');
     }
     @endif
 @endforeach

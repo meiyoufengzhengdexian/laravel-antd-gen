@@ -18,24 +18,25 @@ class BackendLoginController extends BackendController
 
         $client = new Client();
 
-        try{
+        try {
             $res = $client->post(url('/oauth/token'), [
-                'json'=> [
-                    'grant_type'=>"password",
-                    'client_id'=>"1",
-                    "client_secret" => "mPYGPH50mw2kWoqQyCwlFM8gMhKuKo5khtlndI3C",
-                    "username" =>$userName,
+                'json' => [
+                    'grant_type' => "password",
+                    'client_id' => config('backend.clientId'),
+                    "client_secret" => config('backend.clientSecret'),
+                    "username" => $userName,
                     'password' => $password,
-                    'scope'=> 'backend'
+                    'scope' => 'backend'
                 ]
             ]);
+
 
             $data = json_decode($res->getBody(), true);
 
             return $this->success($data);
-         }catch(ClientException $exception){
+        } catch (ClientException $exception) {
             $httpCode = $exception->getCode();
-            switch ($httpCode){
+            switch ($httpCode) {
                 case "401":
                     return $this->failed("用户名或密码错误");
                 case "409":
@@ -44,22 +45,21 @@ class BackendLoginController extends BackendController
                     return $this->failed("服务器内部错误");
             }
         }
-
     }
 
     public function currentUser(Request $request)
     {
         $user = Auth::user();
         $permissions = $user->abilities()->get();
-        if($permissions){
+        if ($permissions) {
             $permissions = $permissions->pluck('name');
-        }else{
+        } else {
             $permissions = [];
         }
 
         return $this->success([
-            'user'=> $user,
-            'permissions'=> $permissions
+            'user' => $user,
+            'permissions' => $permissions
         ]);
     }
 }

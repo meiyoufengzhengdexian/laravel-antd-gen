@@ -38,11 +38,11 @@ trait ConfigTrait
      * @param $columns
      * @return array
      */
-    public function withColumnData($list, $columns): array
+    public function withColumnData($columns, $list): array
     {
         //获取数据类型
-        foreach ($list as $key => $item) {
-            $filter = array_filter($columns, function ($column) use ($item) {
+        foreach ($columns as $key => $item) {
+            $filter = array_filter($list, function ($column) use ($item) {
                 return Arr::get($column, 'name', '##collumn_name')
                     == Arr::get($item, 'name', "##index_name");
             });

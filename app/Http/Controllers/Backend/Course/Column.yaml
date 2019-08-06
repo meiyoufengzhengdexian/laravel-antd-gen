@@ -1,0 +1,61 @@
+fields:
+  -
+    name: id
+    as: id
+    type: text
+
+  -
+    name: name
+    as: 课程名
+    type: text
+    rules:
+      -
+        message: 课程名不能为空
+        rule: required
+  -
+    name: teacher_id
+    as: 教师id
+    type: int
+    model: App\Http\Controllers\Backend\Teacher\TeacherModel
+    refType: belongsTo
+    refMethod: getTeacher
+    refField: name
+    rules:
+      -
+        message: 教师id不能为空
+        rule: required
+      -
+        message: 教师不存在
+        rule: exists:teacher,id
+  -
+    name: max_student
+    as: 最多学生数
+    type: int
+    rules:
+      -
+        message: 最多学生数不能为空
+        rule: required
+  -
+    name: now_student
+    as: 当前学生数
+    type: int
+    rules:
+      -
+        message: 当前学生数不能为空
+        rule: required
+  -
+    name: start_at
+    as: 开始时间
+    type: datetime
+    rules:
+      -
+        message: 开始时间不能为空
+        rule: required
+  -
+    name: end_at
+    as: 结束上课时间
+    type: datetime
+    rules:
+      -
+        message: 结束上课时间不能为空
+        rule: required

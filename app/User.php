@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',  'password',
     ];
 
     /**
@@ -36,7 +36,6 @@ class User extends Authenticatable
     {
         return $this->newQuery()->orWhere('name', $userName)
             ->orWhere('phone', $userName)
-            ->orWhere('email', $userName)
             ->first();
     }
 

@@ -1,17 +1,17 @@
+<?php
 
-
-namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}};
+namespace App\Http\Controllers\Backend\Course;
 
 use App\Http\Controllers\Backend\BackendException;
 use App\Http\Controllers\Backend\BackendPermissionException;
 use App\Http\Controllers\Backend\BackendRequest;
 use App\Http\Controllers\Backend\BackendResource;
-use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}CreateRequest;
-use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest;
-use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest;
-use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}ShowRequest;
-use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest;
-use App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request\{{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest;
+use App\Http\Controllers\Backend\Course\Request\CourseCreateRequest;
+use App\Http\Controllers\Backend\Course\Request\CourseDestroyRequest;
+use App\Http\Controllers\Backend\Course\Request\CourseIndexRequest;
+use App\Http\Controllers\Backend\Course\Request\CourseShowRequest;
+use App\Http\Controllers\Backend\Course\Request\CourseStoreRequest;
+use App\Http\Controllers\Backend\Course\Request\CourseUpdateRequest;
 use App\Http\Controllers\Backend\Lib\AuthResourceTrait;
 use App\Http\Controllers\Backend\Lib\ConfigTrait;
 use App\Http\Controllers\Backend\Lib\ToolTrait;
@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
+trait CourseCurd
 {
     protected $entry;
 
@@ -37,25 +37,25 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
         // $query->where('admin_id', $admin->id);
     }
 
-    private function checkResourcePermission($admin, {{\App\Service\Gen\GenTool::getDir($table)}}Model ${{\App\Service\Gen\GenTool::getDir($table)}}Model)
+    private function checkResourcePermission($admin, CourseModel $CourseModel)
     {
         return true;
     }
 
 
     /**
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request
-     * @return \App\Http\Resources\SuccessResource
-     * @throws BackendException
+     * @param  CourseIndexRequest $request
+     * @return  \App\Http\Resources\SuccessResource
+     * @throws  BackendException
      */
-    public function index({{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest $request)
+    public function index(CourseIndexRequest $request)
     {
-        $indexConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Index');
+        $indexConfig = $this->getConfig('Course.PageConfig.Index');
         $prePage = $request->input('perPage',
             Arr::get($indexConfig, 'perPage',
                 config('backend.defaultPerPage', 20)));
 
-        $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
+        $query = CourseModel::query();
 
         $this->withRefData($query, $request, $indexConfig);
         $this->authRange($this->getNowAdmin(), $query);
@@ -63,31 +63,32 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
         $this->search($query, $request, $indexConfig);
         $this->order($query, $request, $indexConfig);
 
-        $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
+        $columnConfig = $this->getConfig('Course.Column');
 
         $config = self::mergerConfig($columnConfig, $indexConfig);
 
-        $tableColumns = array_filter($config['fields'], function($item){
-            return !isset($item['refMethod']);
-        });
+        $tableColumns = $config['fields'];
+//        $tableColumns = array_filter($config['fields'], function ($item) {
+//            return !isset($item['refMethod']);
+//        });
 
         $field = array_column($tableColumns, 'name');
         $list = $query->select($field)->paginate($prePage);
 
-        foreach($list as $item) {
-            foreach($config['fields'] as $field){
-                if(!isset($field['method'])){
+        foreach ($list as $item) {
+            foreach ($config['fields'] as $field) {
+                if (!isset($field['method'])) {
                     continue;
                 }
-                if(!strpos($field['method'], '@')){
+                if (!strpos($field['method'], '@')) {
                     continue;
                 }
 
                 $method = explode('@', $field['method']);
-                $object = app(__NAMESPACE__.'\\'.$method[0]);
-                if($field['refMethod']){
+                $object = app(__NAMESPACE__ . '\\' . $method[0]);
+                if ($field['refMethod']) {
                     $formatValue = $object->{$method[1]}($item->{$field['refMethod']}, $item, $field);
-                }else{
+                } else {
                     $formatValue = $object->{$method[1]}($item->{$field['name']}, $item, $field);
                 }
                 unset($item->{$field['name']});
@@ -101,10 +102,10 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
     }
 
     /**
-     * @param $query
-     * @param Request $request
-     * @param $indexConfig
-     * @throws BackendException
+     * @param  $query
+     * @param  Request $request
+     * @param  $indexConfig
+     * @throws  BackendException
      */
     public function withRefData(Builder $query, Request $request, $indexConfig)
     {
@@ -114,17 +115,17 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
             throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
-        $columnsConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
+        $columnsConfig = $this->getConfig('Course.Column');
         $columns = Arr::get($columnsConfig, 'fields');
 
-        $indexList = $this->withColumnData($fields, $columns);
+        $indexList = $this->withColumnData($columns, $fields);
 
         foreach ($indexList as $column) {
             if (Arr::get($column, 'type') != 'ref') {
                 continue;
             }
-            $refField =Arr::get($column, 'refField', '*');
-            if($refField != "*" && strpos($refField, 'id') ===false){
+            $refField = Arr::get($column, 'refField', '*');
+            if ($refField != "*" && strpos($refField, 'id') === false) {
                 $refField .= ",id";
             }
             $query->with(Arr::get($column, 'refMethod') . ":" . $refField);
@@ -132,10 +133,10 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
     }
 
     /**
-     * @param Builder $query
-     * @param Request $request
-     * @param $indexConfig
-     * @throws BackendException
+     * @param  Builder $query
+     * @param  Request $request
+     * @param  $indexConfig
+     * @throws  BackendException
      */
     public function search(Builder $query, Request $request, $indexConfig)
     {
@@ -145,7 +146,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
             throw new BackendException('list.yaml 中fields， 必须为数组格式');
         }
 
-        $columnsConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
+        $columnsConfig = $this->getConfig('Course.Column');
         $columns = Arr::get($columnsConfig, 'fields');
 
         $searchList = array_filter($fields, function ($item) {
@@ -193,10 +194,10 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
     /**
      * 根据配置， 和请求参数进行排序
-     * @param Builder $query
-     * @param Request $request
-     * @param $indexConfig
-     * @throws BackendException
+     * @param  Builder $query
+     * @param  Request $request
+     * @param  $indexConfig
+     * @throws  BackendException
      */
     public function order(Builder $query, Request $request, $indexConfig)
     {
@@ -243,28 +244,28 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
     /**
      * 创建页面
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}CreateRequest $request
+     * @param  CourseCreateRequest $request
      */
-    public function create({{\App\Service\Gen\GenTool::getDir($table)}}CreateRequest $request)
+    public function create(CourseCreateRequest $request)
     {
 
     }
 
     /**
      * 保存
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest $request
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @param  CourseStoreRequest $request
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function store({{\App\Service\Gen\GenTool::getDir($table)}}StoreRequest $request)
+    public function store(CourseStoreRequest $request)
     {
         //批量赋值
-        $createConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Create');
-        $columnConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.Column");
+        $createConfig = $this->getConfig('Course.PageConfig.Create');
+        $columnConfig = $this->getConfig("Course.Column");
         $fields = Arr::get($createConfig, 'fields');
         $columns = Arr::get($columnConfig, 'fields');
 
         $fieldsWithColumns = $this->withColumnData($fields, $columns);
-        $newModel = new {{\App\Service\Gen\GenTool::getDir($table)}}Model();
+        $newModel = new CourseModel();
         try {
             DB::beginTransaction();
             $this->fillData($fieldsWithColumns, $newModel, $request);
@@ -294,17 +295,17 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
     /**
      * 显示页面
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}ShowRequest $request
-     * @param $id
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
-     * @throws BackendException
-     * @throws BackendPermissionException
+     * @param  CourseShowRequest $request
+     * @param  $id
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @throws  BackendException
+     * @throws  BackendPermissionException
      */
-    public function show({{\App\Service\Gen\GenTool::getDir($table)}}Showrequest $request, $id)
+    public function show(CourseShowrequest $request, $id)
     {
-        $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
-        $editConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Edit');
-        $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
+        $query = CourseModel::query();
+        $editConfig = $this->getConfig('Course.PageConfig.Edit');
+        $columnConfig = $this->getConfig('Course.Column');
         $config = self::mergerConfig($columnConfig, $editConfig);
 
         $this->withRefData($query, $request, $config);
@@ -342,7 +343,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
     /**
      * 编辑页面
-     * @param BackendRequest $request
+     * @param  BackendRequest $request
      */
     public function edit(BackendRequest $request)
     {
@@ -351,18 +352,18 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
     /**
      * 更新
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest $request
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @param  CourseUpdateRequest $request
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function update({{\App\Service\Gen\GenTool::getDir($table)}}UpdateRequest $request, $id)
+    public function update(CourseUpdateRequest $request, $id)
     {
-        $model = {{\App\Service\Gen\GenTool::getDir($table)}}Model::find($id);
+        $model = CourseModel::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
 
-        $editConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Edit");
-        $columnConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.Column');
+        $editConfig = $this->getConfig("Course.PageConfig.Edit");
+        $columnConfig = $this->getConfig('Course.Column');
 
         $fields = Arr::get($editConfig, 'fields');
         $columns = Arr::get($columnConfig, 'fields');
@@ -383,13 +384,13 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
 
     /**
-     * @param $id
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest $request
-     * @return \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
+     * @param  $id
+     * @param  CourseDestroyRequest $request
+     * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
-    public function destroy($id, {{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest $request)
+    public function destroy($id, CourseDestroyRequest $request)
     {
-        $model = {{\App\Service\Gen\GenTool::getDir($table)}}Model::find($id);
+        $model = CourseModel::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
         }
@@ -408,8 +409,8 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
     }
 
     /**
-     * @param Model $model
-     * @return bool
+     * @param  Model $model
+     * @return  bool
      */
     public function beForeDestroy(Model $model)
     {
@@ -417,18 +418,18 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
     }
 
     /**
-     * @param $fieldsWithColumns
-     * @param {{\App\Service\Gen\GenTool::getDir($table)}}Model $model
-     * @param Request $request
-     * @return {{\App\Service\Gen\GenTool::getDir($table)}}Model
-     * @throws \Exception
+     * @param  $fieldsWithColumns
+     * @param  CourseModel $model
+     * @param  Request $request
+     * @return  CourseModel
+     * @throws  \Exception
      */
-    public function fillData($fieldsWithColumns, {{\App\Service\Gen\GenTool::getDir($table)}}Model $model, Request $request)
+    public function fillData($fieldsWithColumns, CourseModel $model, Request $request)
     {
         foreach ($fieldsWithColumns as $field) {
             $name = Arr::get($field, 'name');
             if (!$name) {
-                throw new BackendException("{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
+                throw new BackendException("Course.PageConfig.Create 配置错误，含有空字段名: " . json_encode($fieldsWithColumns, 256));
             }
 
             if (method_exists($model, 'set' . ucfirst($name))) {
@@ -463,7 +464,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
 
 
     /**
-     * @return mixed
+     * @return  mixed
      */
     public function getEntry(): Model
     {
@@ -471,7 +472,7 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
     }
 
     /**
-     * @param mixed $entry
+     * @param  mixed $entry
      */
     public function setEntry(Model $entry): void
     {

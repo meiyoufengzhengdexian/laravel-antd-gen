@@ -76,6 +76,8 @@ class GenBase
                 $type = 'time';
             } else if (Str::startsWith($field->Type, 'tinyint')) {
                 $type = 'enum';
+            }else{
+                $type = 'text';
             }
 
             $filedInfo = [

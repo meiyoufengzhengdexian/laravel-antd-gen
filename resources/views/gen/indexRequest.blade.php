@@ -12,6 +12,9 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}IndexRequest extends BackendRe
      */
     public function authorize()
     {
+        if($this->checkAuth('backend.{{$table}}.all', '')){
+            return true;
+        }
         $action = $this->getRouteAs();
         return $this->checkAuth($action, "您没有查看列表权限: ". $action);
     }

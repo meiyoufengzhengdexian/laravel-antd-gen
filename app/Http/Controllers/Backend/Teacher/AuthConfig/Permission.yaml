@@ -1,0 +1,19 @@
+permission:
+  -
+    name: backend.teacher.all
+    desc: 所有权限
+  -
+    name: backend.teacher.index
+    desc: 查看列表权限
+  -
+    name: backend.teacher.store
+    desc: 新建保存
+  -
+    name: backend.teacher.update
+    desc: 更新
+  -
+    name: backend.teacher.destroy
+    desc: 删除
+  -
+    name: backend.teacher.all
+    desc: 所有权限

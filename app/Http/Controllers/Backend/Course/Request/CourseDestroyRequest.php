@@ -1,5 +1,5 @@
-
-namespace App\Http\Controllers\Backend\{{\App\Service\Gen\GenTool::getDir($table)}}\Request;
+<?php
+namespace App\Http\Controllers\Backend\Course\Request;
 
 
 use App\Http\Controllers\Backend\BackendException;
@@ -9,20 +9,20 @@ use App\Http\Controllers\Backend\Lib\ConfigTrait;
 use App\Http\Controllers\Backend\Lib\ToolTrait;
 
 
-class {{\App\Service\Gen\GenTool::getDir($table)}}DestroyRequest extends BackendRequest
+class CourseDestroyRequest extends BackendRequest
 {
     use ConfigTrait;
     use ToolTrait;
     use AuthResourceTrait;
 
     /**
-     * @return bool
-     * @throws BackendException
-     * @throws \App\Http\Controllers\Backend\BackendException
+     * @return  bool
+     * @throws  BackendException
+     * @throws  \App\Http\Controllers\Backend\BackendException
      */
     public function authorize()
     {
-        if ($this->checkAuth('backend.{{$table}}.all')) {
+        if ($this->checkAuth('backend.course.all')) {
             return true;
         }
 
