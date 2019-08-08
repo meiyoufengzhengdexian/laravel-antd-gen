@@ -15,5 +15,22 @@ use Illuminate\Support\Facades\Auth;
 
 class Tool
 {
-
+    public static function merge($array1, $array2)
+    {
+        foreach ($array1 as $array1Key => $array1Value) {
+            if (is_array($array1Value)) {
+                if (isset($array2[$array1Key])) {
+                    $array1[$array1Key] = static::merge($array1Value, $array2[$array1Key]);
+                }
+            } else {
+                $array1[$array1Key] = isset($array2[$array1Key]) ? $array2[$array1Key] : $array1Value;
+            }
+        }
+        foreach ($array2 as $array2Key => $array2Value) {
+            if (!isset($array1[$array2Key])) {
+                $array1[$array2Key] = $array2Value;
+            }
+        }
+        return $array1;
+    }
 }

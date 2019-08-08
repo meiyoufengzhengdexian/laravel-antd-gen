@@ -1,0 +1,14 @@
+fields:
+  name:
+    type: text
+  teacher_id:
+    type: int
+  max_student:
+    type: int
+  now_student:
+    type: int
+  start_at:
+    type: datetime
+  end_at:
+    type: datetime
+layout: center

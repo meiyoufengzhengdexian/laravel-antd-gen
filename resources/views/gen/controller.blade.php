@@ -13,13 +13,16 @@ class {{\App\Service\Gen\GenTool::getDir($table)}}Controller extends BackendCont
     public function {{ ucfirst(\App\Service\Gen\GenTool::getDir($table)) }}Options(Request $request)
     {
         $keyWord = $request->input('searchKey', false);
+        $id = $request->input('id', false);
 
-        $cateQuery = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
+        $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
         if($keyWord !== false){
-            $cateQuery->where('name', 'like', "{$keyWord}%");
+            $query->where('name', 'like', "{$keyWord}%");
         }
+        $id !== false && $query->where('id', $id);
 
-        $list = $cateQuery->select(['id', 'name'=>'name'])->limit(20)->get();
+
+        $list = $query->select(['id', 'name'=>'name'])->limit(20)->get();
         return $this->success($list);
     }
 }

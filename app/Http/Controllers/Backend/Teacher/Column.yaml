@@ -2,14 +2,26 @@ fields:
   id:
     as: id
     type: text
-    rules:
-      -
-        message: id不能为空
-        rule: required
   name:
-    as: name
+    as: 名称
     type: text
     rules:
       -
-        message: name不能为空
+        message: 名称不能为空
         rule: required
+  img:
+    as: 头像
+    type: img
+    rules:
+      -
+        message: 头像不能为空
+        rule: required
+  created_at:
+    as: 创建时间
+    type: datetime
+  updated_at:
+    as: 更新时间
+    type: datetime
+  deleted_at:
+    as: 删除时间
+    type: datetime

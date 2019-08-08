@@ -42,9 +42,6 @@ trait ToolTrait
      */
     public function getInput(Request $request, $name)
     {
-        if (!isset($name)) {
-            throw new BackendException('搜索配置中应包含字段名称: ' . json_encode($name, 256));
-        }
         $searchKey = $request->input($name, false);
         return $searchKey;
     }

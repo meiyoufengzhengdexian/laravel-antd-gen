@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend\Teacher;
 
 use App\Http\Controllers\Backend\BackendException;
@@ -10,10 +11,10 @@ use App\Http\Controllers\Backend\Teacher\Request\TeacherDestroyRequest;
 use App\Http\Controllers\Backend\Teacher\Request\TeacherIndexRequest;
 use App\Http\Controllers\Backend\Teacher\Request\TeacherShowRequest;
 use App\Http\Controllers\Backend\Teacher\Request\TeacherStoreRequest;
-use App\Http\Controllers\Backend\Teacher\Request\TeacherUpdateRequest;
 use App\Http\Controllers\Backend\Lib\AuthResourceTrait;
 use App\Http\Controllers\Backend\Lib\ConfigTrait;
 use App\Http\Controllers\Backend\Lib\ToolTrait;
+use App\Http\Controllers\Backend\Teacher\Request\TeacherUpdateRequest;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -43,25 +44,25 @@ trait TeacherCurd
 
 
     /**
-    * @param    TeacherIndexRequest $request
-    * @return    \App\Http\Resources\SuccessResource
-    * @throws  BackendException
-    */
+     * @param    TeacherIndexRequest $request
+     * @return    \App\Http\Resources\SuccessResource
+     * @throws  BackendException
+     */
     public function index(TeacherIndexRequest $request)
     {
-
         return $this->success($this->getTeacherList($request));
     }
 
     /**
-    * @param  Request $request
-    * @return  \Illuminate\Contracts\Pagination\LengthAwarePaginator
-    * @throws  BackendException
-    */
-    public function getTeacherList(Request $request){
+     * @param  Request $request
+     * @return  \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @throws  BackendException
+     */
+    public function getTeacherList(Request $request)
+    {
         $indexConfig = $this->getConfig('Teacher.PageConfig.Index');
-        $prePage = $request->input('perPage',
-            Arr::get($indexConfig, 'perPage',
+        $prePage = $request->input('pageSize',
+            Arr::get($indexConfig, 'pageSize',
                 config('backend.defaultPerPage', 20)));
 
         $query = TeacherModel::query();
@@ -81,20 +82,20 @@ trait TeacherCurd
         $field = array_keys($tableColumns);
         $list = $query->select($field)->paginate($prePage);
 
-        foreach($list as $item) {
-            foreach($config['fields'] as $field){
-                if(!isset($field['method'])){
+        foreach ($list as $item) {
+            foreach ($config['fields'] as $field) {
+                if (!isset($field['method'])) {
                     continue;
                 }
-                if(!strpos($field['method'], '@')){
+                if (!strpos($field['method'], '@')) {
                     continue;
                 }
 
                 $method = explode('@', $field['method']);
-                $object = app(__NAMESPACE__.'\\'.$method[0]);
-                if($field['refMethod']){
+                $object = app(__NAMESPACE__ . '\\' . $method[0]);
+                if ($field['refMethod']) {
                     $formatValue = $object->{$method[1]}($item->{$field['refMethod']}, $item, $field);
-                }else{
+                } else {
                     $formatValue = $object->{$method[1]}($item->{$field['name']}, $item, $field);
                 }
                 unset($item->{$field['name']});
@@ -130,8 +131,8 @@ trait TeacherCurd
             if (Arr::get($column, 'type') != 'ref') {
                 continue;
             }
-            $refField =Arr::get($column, 'refField', '*');
-            if($refField != "*" && strpos($refField, 'id') ===false){
+            $refField = Arr::get($column, 'refField', '*');
+            if ($refField != "*" && strpos($refField, 'id') === false) {
                 $refField .= ",id";
             }
             $query->with(Arr::get($column, 'refMethod') . ":" . $refField);
@@ -160,8 +161,7 @@ trait TeacherCurd
         });
 
         $searchList = $this->withColumnData($searchList, $columns);
-
-        foreach ($searchList as $name=> $column) {
+        foreach ($searchList as $name => $column) {
             $searchKey = $this->getInput($request, $name);
             if ($searchKey === false || is_null($searchKey)) {
                 continue;
@@ -185,7 +185,8 @@ trait TeacherCurd
                     if (count($searchKey) != 2) {
                         throw new BackendException("datetime, date, time 类型应为二维数组");
                     }
-                    $query->whereBetween($name, $searchKey[0], $searchKey[1]);
+                    $query->where($name, '>=', $searchKey[0]);
+                    $query->where($name, '<=', $searchKey[1]);
                     break;
                 case "enums":
                     if ($searchKey && !is_array($searchKey)) {
@@ -324,7 +325,8 @@ trait TeacherCurd
         return $this->success($data);
     }
 
-    public function getTeacher($id, Request $request){
+    public function getTeacher($id, Request $request)
+    {
         $query = TeacherModel::query();
         $editConfig = $this->getConfig('Teacher.PageConfig.Edit');
         $columnConfig = $this->getConfig('Teacher.Column');
@@ -333,7 +335,7 @@ trait TeacherCurd
         $this->withRefData($query, $request, $config);
         $data = $query->where('id', $id)->first();
 
-        foreach ($config['fields'] as $name=>$item) {
+        foreach ($config['fields'] as $name => $item) {
             if (!isset($item['method'])) {
                 continue;
             }
@@ -366,7 +368,7 @@ trait TeacherCurd
 
     /**
      * 更新
-     * @param  TeacherUpdateRequest $request
+     * @param $id
      * @return  \App\Http\Resources\ErrorResource|\App\Http\Resources\SuccessResource
      */
     public function update(TeacherUpdateRequest $request, $id)
@@ -376,6 +378,9 @@ trait TeacherCurd
             return $this->failed("模型未找到, id: " . $id);
         }
 
+        if (!$this->checkResourcePermission($this->getNowAdmin(), $model)) {
+            return $this->failed("您没有权限");
+        }
         $editConfig = $this->getConfig("Teacher.PageConfig.Edit");
         $columnConfig = $this->getConfig('Teacher.Column');
 
@@ -450,10 +455,14 @@ trait TeacherCurd
                 $model->$methodName($request->input($name));
                 continue;
             }
+            if (Arr::get($field, 'pk')) {
+                continue;
+            }
 
             if (Arr::get($field, 'type') != 'ref') {
                 //不是关联数据
-                $model->$name = $request->input($name);
+
+                $model->$name = $request->input($name) ?: '';
             } else {
                 switch (Arr::get($field, 'refType')) {
                     case "belongsTo"://多对一关联

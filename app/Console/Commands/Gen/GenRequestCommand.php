@@ -60,6 +60,11 @@ class GenRequestCommand extends Command
             }
         }else{
             GenRequest::indexRequest($tableName);
+            GenRequest::createRequest($tableName);
+            GenRequest::showRequest($tableName);
+            GenRequest::storeRequest($tableName);
+            GenRequest::updateRequest($tableName);
+            GenRequest::destroyRequest($tableName);
         }
         return;
     }

@@ -43,11 +43,24 @@ Route::group([
             Route::resource('cate', 'Cate\CateController');
             Route::resource('test', 'Test\TestController');
             Route::resource('teacher', 'Teacher\TeacherController');
+            Route::resource('users', 'Users\UsersController');
             Route::resource('course', 'Course\CourseController');
             Route::get('currentUser', 'BackendLoginController@currentUser');
             Route::get('cityOptions', 'City\CityController@options');
             Route::get('cateOptions', 'Cate\CateController@cateOptions');
             Route::get('tagOptions', 'Cate\CateController@tags');
+            Route::post('upload', 'UploadController@upload');
+
+            Route::get('user-info/{id?}', 'Users\UsersController@info');
+
+            Route::group([
+                'prefix' => 'search'
+            ], function(){
+                Route::get('teacher', 'Teacher\TeacherController@TeacherOptions');
+            });
         });
     });
+});
+
+Route::get('testtest', function(){
 });

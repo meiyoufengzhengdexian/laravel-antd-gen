@@ -1,0 +1,24 @@
+orderBy: '`created_at` desc, `id` asc'
+perPage: 20
+fields:
+  id:
+    search: true
+  name:
+    search: true
+  teacher_id:
+    search: true
+    type: ref
+    refMethod: getTeacher
+    refField: id,name
+  max_student:
+    search: true
+  now_student:
+    search: true
+  start_at:
+    search: true
+  end_at:
+    search: true
+  created_at:
+    search: true
+  updated_at:
+    search: true

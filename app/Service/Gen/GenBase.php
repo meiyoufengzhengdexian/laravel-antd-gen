@@ -47,15 +47,12 @@ class GenBase
         foreach ($tableQuery as $field) {
             if ($field->Field == 'created_at') {
                 $field->Zh = '创建时间';
-                continue;
             }
             if ($field->Field == 'updated_at') {
                 $field->Zh = '更新时间';
-                continue;
             }
             if ($field->Field == 'deleted_at') {
                 $field->Zh = '删除时间';
-                continue;
             }
 
             do {
@@ -68,7 +65,9 @@ class GenBase
                 $type = 'int';
             } else if (Str::startsWith($field->Type, 'varchar')) {
                 $type = 'text';
-            } else if (Str::startsWith($field->Type, 'datetime')) {
+            } else if (Str::startsWith($field->Type, 'timestamp')){
+                $type = 'datetime';
+            }else if (Str::startsWith($field->Type, 'datetime')) {
                 $type = 'datetime';
             } else if (Str::startsWith($field->Type, 'date')) {
                 $type = 'date';
@@ -81,7 +80,6 @@ class GenBase
             }
 
             $filedInfo = [
-//                'name' => $field->Field,
                 'as' => $field->Zh,
                 'type' => $type
             ];
@@ -150,12 +148,13 @@ class GenBase
                 break;
             }
 
-            if (!in_array($field->Field, ['created_at', 'updated_ats', 'deleted_at'])) {
+            if (!in_array($field->Field, ['created_at', 'updated_at', 'deleted_at', 'id'])) {
                 $filedInfo['rules'][] = [
                     'message' => $filedInfo['as'] . '不能为空',
                     'rule' => 'required'
                 ];
             }
+
 
             $fieldsYaml['fields'][$field->Field] = $filedInfo;
         }

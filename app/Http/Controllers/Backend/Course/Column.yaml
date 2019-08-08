@@ -1,0 +1,55 @@
+fields:
+  id:
+    as: id
+    type: text
+  name:
+    as: 课程名
+    type: text
+    rules:
+      -
+        message: 课程名不能为空
+        rule: required
+  teacher_id:
+    as: 教师
+    type: int
+    rules:
+      -
+        message: 教师不能为空
+        rule: required
+  max_student:
+    as: 最多学生限制
+    type: int
+    rules:
+      -
+        message: 最多学生限制不能为空
+        rule: required
+  now_student:
+    as: 当前学生数量
+    type: int
+    rules:
+      -
+        message: 当前学生数量不能为空
+        rule: required
+  start_at:
+    as: 开课时间
+    type: datetime
+    rules:
+      -
+        message: 开课时间不能为空
+        rule: required
+  end_at:
+    as: 截止时间
+    type: datetime
+    rules:
+      -
+        message: 截止时间不能为空
+        rule: required
+  created_at:
+    as: 创建时间
+    type: datetime
+  updated_at:
+    as: 最后更新时间
+    type: datetime
+  deleted_at:
+    as: 最后删除时间
+    type: datetime

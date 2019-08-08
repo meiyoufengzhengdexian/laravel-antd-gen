@@ -9,10 +9,9 @@
 namespace App\Http\Controllers\Backend\Lib;
 
 
-use Illuminate\Support\Arr;
 use Spyc;
 
-trait ConfigTrait
+Trait ConfigTrait
 {
     /**
      * 获取yaml配置文件内容
@@ -21,7 +20,11 @@ trait ConfigTrait
      */
     public function getConfig($filename)
     {
-        $baseDir = "../app/Http/Controllers/Backend";
+        if(defined('ARTISAN_BINARY') && ARTISAN_BINARY == 'artisan'){
+            $baseDir = "./app/Http/Controllers/Backend";
+        } else {
+            $baseDir = "../app/Http/Controllers/Backend";
+        }
         $filename = str_replace('.', DIRECTORY_SEPARATOR, $filename);
         $readFileName = "$baseDir/$filename.yaml";
 
@@ -40,6 +43,7 @@ trait ConfigTrait
      */
     public function withColumnData($list, $columns): array
     {
-        return array_merge_recursive($columns, $list);
+        $merge = Tool::merge($columns, $list);
+        return array_intersect_key($merge, $list);
     }
 }

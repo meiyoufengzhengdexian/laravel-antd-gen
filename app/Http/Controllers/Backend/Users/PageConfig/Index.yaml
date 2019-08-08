@@ -1,10 +1,9 @@
----
-# 列表页
-orderBy: "created_at|id,desc"
-pageSize: 20
-list:
-  - id
-  - name
-  - phone
-  - age
-  - schoole
+orderBy: '`created_at` desc, `id` asc'
+perPage: 20
+fields:
+  id:
+    search: true
+  name:
+    search: true
+  phone:
+    search: true

@@ -1,10 +1,19 @@
----
 permission:
-  - name: users.create
-    desc: users.authority.create
-
-  - name: users.menu
-    desc: users.authority.menu
-
-  - name: users.menu.index
-    desc: users.authority.index
+  -
+    name: backend.users.all
+    desc: 所有权限
+  -
+    name: backend.users.index
+    desc: 查看列表权限
+  -
+    name: backend.users.store
+    desc: 新建保存
+  -
+    name: backend.users.update
+    desc: 更新
+  -
+    name: backend.users.destroy
+    desc: 删除
+  -
+    name: backend.users.all
+    desc: 所有权限

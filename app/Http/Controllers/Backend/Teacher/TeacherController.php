@@ -13,13 +13,15 @@ class TeacherController extends BackendController
     public function TeacherOptions(Request $request)
     {
         $keyWord = $request->input('searchKey', false);
+        $id = $request->input('id', false);
 
-        $cateQuery = TeacherModel::query();
+        $teacherQuery = TeacherModel::query();
         if ($keyWord !== false) {
-            $cateQuery->where('name', 'like', "{$keyWord}%");
+            $teacherQuery->where('name', 'like', "{$keyWord}%");
         }
+        $id !== false && $teacherQuery->where('id', $id);
 
-        $list = $cateQuery->select(['id', 'name' => 'name'])->limit(20)->get();
+        $list = $teacherQuery->select(['id', 'name' => 'name'])->limit(20)->get();
         return $this->success($list);
     }
 }

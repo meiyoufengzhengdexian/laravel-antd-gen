@@ -43,16 +43,16 @@ class GenControllerCommand extends Command
             $tableName = $this->ask('请输入表命');
         } while (!$tableName);
 
-        if(file_exists(GenTool::getControllerFile($tableName))){
-            do{
+        if (file_exists(GenTool::getControllerFile($tableName))) {
+            do {
                 $confirm = $this->ask('控制器已经存在， 是否覆盖? y/n');
-            }while(!in_array($confirm, ['y', 'n']));
+            } while (!in_array($confirm, ['y', 'n']));
 
-            if($confirm == 'y'){
+            if ($confirm == 'y') {
                 GenController::crud($tableName);
                 GenController::controller($tableName);
             }
-        }else{
+        } else {
             GenController::crud($tableName);
             GenController::controller($tableName);
         }

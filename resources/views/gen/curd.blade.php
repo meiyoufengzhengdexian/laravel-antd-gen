@@ -60,8 +60,8 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
     */
     public function get{{\App\Service\Gen\GenTool::getDir($table)}}List(Request $request){
         $indexConfig = $this->getConfig('{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Index');
-        $prePage = $request->input('perPage',
-            Arr::get($indexConfig, 'perPage',
+        $prePage = $request->input('pageSize',
+            Arr::get($indexConfig, 'pageSize',
                 config('backend.defaultPerPage', 20)));
 
         $query = {{\App\Service\Gen\GenTool::getDir($table)}}Model::query();
@@ -372,6 +372,9 @@ trait {{\App\Service\Gen\GenTool::getDir($table)}}Curd
         $model = {{\App\Service\Gen\GenTool::getDir($table)}}Model::find($id);
         if (!$model) {
             return $this->failed("模型未找到, id: " . $id);
+        }
+        if (!$this->checkResourcePermission($this->getNowAdmin(), $model)) {
+            return $this->failed("您没有权限");
         }
 
         $editConfig = $this->getConfig("{{\App\Service\Gen\GenTool::getDir($table)}}.PageConfig.Edit");

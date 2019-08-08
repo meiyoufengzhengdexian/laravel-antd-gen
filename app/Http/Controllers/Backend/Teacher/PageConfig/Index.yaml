@@ -3,6 +3,7 @@ perPage: 20
 fields:
   id:
     search: true
-    type: xxx
   name:
+    search: true
+  created_at:
     search: true

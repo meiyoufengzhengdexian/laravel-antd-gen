@@ -72,6 +72,37 @@ class GenTool
         }
     }
 
+    public static function getFormatDir($tableName)
+    {
+        if(!is_dir(config('backend.vueRoot')."/src/format/")){
+            mkdir(config('backend.vueRoot')."/src/format/");
+        }
+        return config('backend.vueRoot')."/src/format/".lcfirst(GenTool::getDir($tableName)).".js";
+    }
+
+    public static function getApiDir($tableName)
+    {
+        if(!is_dir(config('backend.vueRoot')."/src/api")){
+            mkdir(config('backend.vueRoot')."/src/api");
+        }
+        return config('backend.vueRoot')."/src/api/".lcfirst(GenTool::getDir($tableName)).".js";
+    }
+
+    public static function getSelectDir($tableName)
+    {
+        if(!is_dir(config('backend.vueRoot')."/src/components/Selects")){
+            mkdir(config('backend.vueRoot')."/src/components/Selects");
+        }
+        return config('backend.vueRoot')."/src/components/Selects/".GenTool::getDir($tableName).".vue";
+    }
+
+    public static function getIndexDir($tableName)
+    {
+        if(!is_dir(config('backend.vueRoot')."/src/views/".lcfirst(GenTool::getDir($tableName)))){
+            mkdir(config('backend.vueRoot')."/src/views/".lcfirst(GenTool::getDir($tableName)));
+        }
+        return config('backend.vueRoot')."/src/views/".GenTool::getDir($tableName)."/".GenTool::getDir($tableName).".vue";
+    }
 
 
 }

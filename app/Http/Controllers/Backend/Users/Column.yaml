@@ -1,0 +1,36 @@
+fields:
+  id:
+    as: id
+    type: text
+    rules:
+      -
+        message: id不能为空
+        rule: required
+  name:
+    as: 用户名
+    type: text
+    rules:
+      -
+        message: 用户名不能为空
+        rule: required
+  password:
+    as: 密码
+    type: text
+    rules:
+      -
+        message: 密码不能为空
+        rule: required
+  remember_token:
+    as: remember_token
+    type: text
+    rules:
+      -
+        message: remember_token不能为空
+        rule: required
+  phone:
+    as: 手机号
+    type: text
+    rules:
+      -
+        message: 手机号不能为空
+        rule: required

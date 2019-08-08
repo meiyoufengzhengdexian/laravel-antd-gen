@@ -1,4 +1,6 @@
 fields:
   name:
     type: text
+  img:
+    type: img
 layout: center

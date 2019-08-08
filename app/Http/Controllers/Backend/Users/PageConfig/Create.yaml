@@ -1,56 +1,8 @@
----
-# 创建表单页面
-layout: center
 fields:
-  - name: name
+  name:
     type: text
-    label: 您的姓名 # 不填写默认为 {$field}
-    placeholder: "" # 不填写local 默认找语言文件中的， 为 请填写{$field}
-  - name: phone
-    type: number
-  - name: email
+  password:
     type: text
-
-#---
-#layout: twoCol # 左右两列
-#left:
-#  - name: "name"
-#    type: text
-#    label: 您的姓名 # 不填写默认为 {$field}
-#    placeholder: "" # 不填写local 默认找语言文件中的， 为 请填写{$field}
-#right:
-#  - name: age
-#    type: number
-#  - name: schooleStartDate
-#    type: date
-#
-#---
-#layout: step # 步骤条
-#steps:
-#  - name: 第一步
-#    fields:
-#      - name: name
-#        type: text
-#      - name: age
-#        type: number
-#  - name: 第二部
-#    fields:
-#      - name: schooleName
-#        type: text
-#      - name: schooleStart
-#        type: date
-#---
-#layout: tab # 选项卡
-#tabs:
-#  - name: 第一步
-#    fields:
-#      - name: name
-#        type: text
-#      - name: age
-#        type: number
-#  - name: 第二部
-#    fields:
-#      - name: schooleName
-#        type: text
-#      - name: schooleStart
-#        type: date
+  phone:
+    type: text
+layout: center
