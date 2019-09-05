@@ -1,0 +1,41 @@
+fields:
+  id:
+    as: id
+    type: text
+  name:
+    as: 名称
+    type: text
+    rules:
+      -
+        message: 名称不能为空
+        rule: required
+  price:
+    as: 价格
+    type: text
+    rules:
+      -
+        message: 价格不能为空
+        rule: required
+  work_off:
+    as: 已售出
+    type: int
+    rules:
+      -
+        message: 已售出不能为空
+        rule: required
+  bar_code:
+    as: 条形码
+    type: text
+    rules:
+      -
+        message: 条形码不能为空
+        rule: required
+  created_at:
+    as: 创建时间
+    type: datetime
+  updated_at:
+    as: 更新时间
+    type: datetime
+  deleted_at:
+    as: 删除时间
+    type: datetime

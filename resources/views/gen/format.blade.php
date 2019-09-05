@@ -1,4 +1,4 @@
-export function createTeacher(teacher) {
+export function create{{\App\Service\Gen\GenTool::getDir($tableName)}}({{lcfirst(\App\Service\Gen\GenTool::getDir($tableName))}}) {
   return {
 <?php $count = count(\Illuminate\Support\Arr::get($config, 'fields', [])); $i=0;?>
 @foreach(\Illuminate\Support\Arr::get($config, 'fields') as $name=>$field)

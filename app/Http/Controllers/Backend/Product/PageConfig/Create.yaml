@@ -1,0 +1,10 @@
+fields:
+  name:
+    type: text
+  price:
+    type: text
+  work_off:
+    type: int
+  bar_code:
+    type: text
+layout: center

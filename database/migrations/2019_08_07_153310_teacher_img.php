@@ -25,6 +25,8 @@ class TeacherImg extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('teacher', function(Blueprint $table){
+            $table->dropColumn('img');
+        });
     }
 }

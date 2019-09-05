@@ -93,7 +93,7 @@
     import Upload from '../../components/Upload/Upload'
     import pageMixins from '@/utils/page'
     import datetimeOption from '@/utils/datetime'
-
+    import { isPhone } from '@/utils'
     export default {
         components: {
             Upload,
@@ -124,13 +124,13 @@
         },
         methods: {
             create() {
-                this.current = createTeacher({})
+                this.current = create{{\App\Service\Gen\GenTool::getDir($tableName)}}({})
                 this.currentDialog = true
                 this.currentType = 'create'
             },
             editRow(row) {
-                getTeacher(row).then(response => {
-                    this.current = Object.assign({}, createTeacher(response.data))
+                get{{\App\Service\Gen\GenTool::getDir($tableName)}}(row).then(response => {
+                    this.current = Object.assign({}, create{{\App\Service\Gen\GenTool::getDir($tableName)}}(response.data))
                     this.currentDialog = true
                     this.currentType = 'edit'
                 })
@@ -138,7 +138,7 @@
             saveCurrent() {
                 console.log(this.current)
                 if (this.currentType === 'edit') {
-                    updateTeacher(this.current)
+                    update{{\App\Service\Gen\GenTool::getDir($tableName)}}(this.current)
                         .then(_ => {
                             this.fetchData()
                             this.currentDialog = false
@@ -148,7 +148,7 @@
                             })
                         })
                 } else if (this.currentType === 'create') {
-                    storeTeacher(this.current)
+                    store{{\App\Service\Gen\GenTool::getDir($tableName)}}(this.current)
                         .then(_ => {
                             this.fetchData()
                             this.currentDialog = false
@@ -166,7 +166,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    deleteTeacher(row).then(_ => {
+                    delete{{\App\Service\Gen\GenTool::getDir($tableName)}}(row).then(_ => {
                         this.fetchData()
                         this.$message({
                             type: 'success',
@@ -183,7 +183,7 @@
                     page: this.listPage.currentPage,
                     pageSize: this.listPage.pageSize
                 }
-                getTeacherList(params).then(response => {
+                get{{\App\Service\Gen\GenTool::getDir($tableName)}}List(params).then(response => {
                     console.log('vue', response)
                     this.list = response.data
                     this.listPage.currentPage = response.current_page

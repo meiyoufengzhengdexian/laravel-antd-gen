@@ -20,6 +20,11 @@ class UsersController extends Controller
         return new userResource($user);
     }
 
+    /**
+     * @param Request $request
+     * @param UserService $userService
+     * @return SuccessResource
+     */
     public function store(Request $request, UserService $userService)
     {
         $name =$request->input('name');

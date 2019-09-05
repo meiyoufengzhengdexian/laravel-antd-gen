@@ -14,8 +14,8 @@ class DeleteUserEmailFiled extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table){
-            $table->dropColumn('email');
-            $table->dropColumn('email_verified_at');
+                $table->dropColumn('email');
+                $table->dropColumn('email_verified_at');
         });
     }
 
@@ -26,6 +26,9 @@ class DeleteUserEmailFiled extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('users', function(Blueprint $table){
+            $table->string('email');
+            $table->timestamp('email_verified_at');
+        });
     }
 }

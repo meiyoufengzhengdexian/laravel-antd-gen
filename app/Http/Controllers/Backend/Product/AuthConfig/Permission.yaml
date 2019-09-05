@@ -1,0 +1,19 @@
+permission:
+  -
+    name: backend.product.all
+    desc: 所有权限
+  -
+    name: backend.product.index
+    desc: 查看列表权限
+  -
+    name: backend.product.store
+    desc: 新建保存
+  -
+    name: backend.product.update
+    desc: 更新
+  -
+    name: backend.product.destroy
+    desc: 删除
+  -
+    name: backend.product.all
+    desc: 所有权限

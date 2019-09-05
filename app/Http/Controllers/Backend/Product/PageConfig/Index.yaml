@@ -1,0 +1,13 @@
+orderBy: '`created_at` desc, `id` asc'
+perPage: 20
+fields:
+  id:
+    search: true
+  name:
+    search: true
+  price:
+    search: true
+  work_off:
+    search: true
+  bar_code:
+    search: true

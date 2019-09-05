@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import { create{{\App\Service\Gen\GenTool::getDir($tableName)}} } from '@/format/{{lcfirst(\App\Service\Gen\GenTool::getDir($tableName))}}'
-export function getTeacherList(params) {
+export function get{{\App\Service\Gen\GenTool::getDir($tableName)}}List(params) {
   const result = request({
     url: '/api/backend/{{lcfirst(\App\Service\Gen\GenTool::getDir($tableName))}}',
     method: 'get',
@@ -16,7 +16,6 @@ export function getTeacherList(params) {
 
 export function get{{\App\Service\Gen\GenTool::getDir($tableName)}}({{lcfirst(\App\Service\Gen\GenTool::getDir($tableName))}}) {
   if (!{{lcfirst(\App\Service\Gen\GenTool::getDir($tableName))}}.id) {
-    console.log('{{lcfirst(\App\Service\Gen\GenTool::getDir($tableName))}}.id is not define')
     return
   }
   return request({

@@ -45,6 +45,7 @@ Route::group([
             Route::resource('teacher', 'Teacher\TeacherController');
             Route::resource('users', 'Users\UsersController');
             Route::resource('course', 'Course\CourseController');
+            Route::resource('product', 'Product\ProductController');
             Route::get('currentUser', 'BackendLoginController@currentUser');
             Route::get('cityOptions', 'City\CityController@options');
             Route::get('cateOptions', 'Cate\CateController@cateOptions');
@@ -57,6 +58,7 @@ Route::group([
                 'prefix' => 'search'
             ], function(){
                 Route::get('teacher', 'Teacher\TeacherController@TeacherOptions');
+                Route::get('product', 'Product\ProductController@ProductOptions');
             });
         });
     });
